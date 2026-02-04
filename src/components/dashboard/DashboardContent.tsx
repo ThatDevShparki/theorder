@@ -146,7 +146,7 @@ export default function DashboardContent({
         </p>
         <a
           href="/"
-          className="text-background hover:glow-magenta mt-4 inline-block rounded-lg bg-[var(--magenta)] px-6 py-2 font-medium transition-all"
+          className="bg-primary text-primary-foreground hover:bg-primary/90 hover:glow-magenta mt-4 inline-block rounded-lg px-6 py-2 font-medium transition-colors"
         >
           Browse Fandoms
         </a>
@@ -197,11 +197,11 @@ function FandomProgress({
       >
         <div className="flex min-w-0 flex-1 items-center gap-2">
           {isFavorite && (
-            <span className="shrink-0 text-[var(--gold)]" title="Favorited">
+            <span className="text-warning shrink-0" title="Favorited">
               ★
             </span>
           )}
-          <h3 className="truncate text-xl font-semibold group-hover:text-[var(--magenta)]">
+          <h3 className="group-hover:text-primary truncate font-serif text-xl font-semibold tracking-wide">
             {fandom.name}
           </h3>
         </div>
@@ -296,12 +296,10 @@ function ListProgressRow({
       <a href={`/fandom/${fandomId}/list/${list.id}`} className="group block">
         <div className="flex items-center justify-between text-sm">
           <span className="text-muted-foreground group-hover:text-foreground flex items-center gap-1">
-            {isFavorite && (
-              <span className="text-xs text-[var(--gold)]">★</span>
-            )}
+            {isFavorite && <span className="text-warning text-xs">★</span>}
             {list.title}
           </span>
-          <span className="font-mono text-[var(--magenta)]">
+          <span className="text-primary font-mono">
             {completedCount}/{totalEntries}
           </span>
         </div>
@@ -317,16 +315,16 @@ function ListProgressRow({
       {!isComplete && nextEntry && (
         <a
           href={`/fandom/${fandomId}/list/${list.id}`}
-          className="border-border/50 bg-background/50 hover:bg-background group flex items-center gap-3 rounded-lg border p-3 transition-colors hover:border-[var(--cyan)]/50"
+          className="border-border/50 bg-background/50 hover:bg-background group hover:border-accent/50 flex items-center gap-3 rounded-lg border p-3 transition-colors"
         >
-          <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[var(--cyan)]/20 text-[var(--cyan)]">
+          <div className="bg-accent/20 text-accent flex size-8 shrink-0 items-center justify-center rounded-full">
             <Play className="size-4" />
           </div>
           <div className="min-w-0 flex-1">
             <div className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
               Watch Next
             </div>
-            <div className="truncate font-medium group-hover:text-[var(--cyan)]">
+            <div className="group-hover:text-accent truncate font-medium">
               {nextEntry.title}
             </div>
             {(formatEpisodeInfo(nextEntry) || nextEntry.showTitle) && (

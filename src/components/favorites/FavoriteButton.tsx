@@ -35,10 +35,10 @@ export default function FavoriteButton({
           toggle()
         }}
         className={cn(
-          'text-2xl transition-all hover:scale-110 focus:outline-none',
+          'focus-visible:outline-ring rounded-sm text-2xl transition-transform focus-visible:outline-2 focus-visible:outline-offset-2 motion-safe:hover:scale-110',
           isFavorite
-            ? 'text-[var(--gold)]'
-            : 'text-muted-foreground hover:text-[var(--gold)]',
+            ? 'text-warning'
+            : 'text-muted-foreground hover:text-warning',
           className
         )}
         aria-label={label}
@@ -59,7 +59,7 @@ export default function FavoriteButton({
       variant={isFavorite ? 'default' : 'outline'}
       className={cn(
         'gap-2',
-        isFavorite && 'bg-[var(--gold)] text-black hover:bg-[var(--gold)]/90',
+        isFavorite && 'bg-warning text-warning-foreground hover:bg-warning/90',
         className
       )}
     >

@@ -47,12 +47,12 @@ function getEntryTypeLabel(type: string): string {
 
 function getEntryTypeColor(type: string): string {
   const colors: Record<string, string> = {
-    movie: 'bg-[var(--gold)]/20 text-[var(--gold)]',
-    'tv-episode': 'bg-[var(--cyan)]/20 text-[var(--cyan)]',
-    'tv-special': 'bg-[var(--cyan)]/20 text-[var(--cyan)]',
-    book: 'bg-[var(--purple)]/20 text-[var(--purple)]',
-    comic: 'bg-[var(--purple)]/20 text-[var(--purple)]',
-    short: 'bg-[var(--magenta)]/20 text-[var(--magenta)]',
+    movie: 'bg-warning/20 text-warning',
+    'tv-episode': 'bg-accent/20 text-accent',
+    'tv-special': 'bg-accent/20 text-accent',
+    book: 'bg-chart-3/20 text-chart-3',
+    comic: 'bg-chart-3/20 text-chart-3',
+    short: 'bg-primary/20 text-primary',
     game: 'bg-success/20 text-success',
   }
   return colors[type] ?? 'bg-muted text-muted-foreground'

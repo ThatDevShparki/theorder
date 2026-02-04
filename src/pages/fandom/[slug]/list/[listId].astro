@@ -58,10 +58,13 @@ fandomEntries.forEach((entry) => {
 
   <main class="mx-auto max-w-4xl px-4 py-8">
     {/* Breadcrumb */}
-    <nav class="text-muted-foreground mb-6 text-sm">
-      <a href="/" class="hover:text-foreground">Browse</a>
+    <nav aria-label="Breadcrumb" class="text-muted-foreground mb-6 text-sm">
+      <a href="/" class="hover:text-foreground transition-colors">Browse</a>
       <span class="mx-2">→</span>
-      <a href={`/fandom/${fandomSlug}`} class="hover:text-foreground">
+      <a
+        href={`/fandom/${fandomSlug}`}
+        class="hover:text-foreground transition-colors"
+      >
         {fandomName}
       </a>
       <span class="mx-2">→</span>
@@ -71,7 +74,9 @@ fandomEntries.forEach((entry) => {
     {/* List Header */}
     <header class="mb-8">
       <div class="flex items-start justify-between gap-4">
-        <h1 class="text-3xl font-bold tracking-wide">{list.data.title}</h1>
+        <h1 class="font-serif text-3xl font-semibold tracking-wider">
+          {list.data.title}
+        </h1>
         <FavoriteButton
           client:visible
           type="list"

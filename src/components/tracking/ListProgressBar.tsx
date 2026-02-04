@@ -50,10 +50,8 @@ export default function ListProgressBar({
           <span
             className={cn(
               'font-semibold',
-              progressPercent === 100 && 'text-glow-gold text-[var(--gold)]',
-              progressPercent > 0 &&
-                progressPercent < 100 &&
-                'text-[var(--magenta)]'
+              progressPercent === 100 && 'text-glow-gold text-warning',
+              progressPercent > 0 && progressPercent < 100 && 'text-primary'
             )}
           >
             {progressPercent}%

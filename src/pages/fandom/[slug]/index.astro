@@ -35,8 +35,8 @@ const fandomEntries = allEntries.filter((e) => e.id.startsWith(fandomId + '/'))
 
   <main class="mx-auto max-w-4xl px-4 py-8">
     {/* Breadcrumb */}
-    <nav class="text-muted-foreground mb-6 text-sm">
-      <a href="/" class="hover:text-foreground">Browse</a>
+    <nav aria-label="Breadcrumb" class="text-muted-foreground mb-6 text-sm">
+      <a href="/" class="hover:text-foreground transition-colors">Browse</a>
       <span class="mx-2">→</span>
       <span class="text-foreground">{fandom.data.name}</span>
     </nav>
@@ -44,7 +44,9 @@ const fandomEntries = allEntries.filter((e) => e.id.startsWith(fandomId + '/'))
     {/* Fandom Header */}
     <header class="mb-8">
       <div class="flex items-start justify-between gap-4">
-        <h1 class="text-4xl font-bold tracking-wide">{fandom.data.name}</h1>
+        <h1 class="font-serif text-4xl font-semibold tracking-wider">
+          {fandom.data.name}
+        </h1>
         <FavoriteButton
           client:visible
           type="fandom"
@@ -78,7 +80,7 @@ const fandomEntries = allEntries.filter((e) => e.id.startsWith(fandomId + '/'))
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
-              class="bg-elevated hover:bg-hover rounded-lg px-4 py-2 text-sm font-medium transition-colors hover:text-[var(--cyan)]"
+              class="bg-elevated hover:bg-hover hover:text-accent rounded-lg px-4 py-2 text-sm font-medium transition-colors"
             >
               {link.label} ↗
             </a>
@@ -89,7 +91,9 @@ const fandomEntries = allEntries.filter((e) => e.id.startsWith(fandomId + '/'))
 
     {/* Lists Section */}
     <section>
-      <h2 class="mb-4 text-xl font-semibold">Choose Your Order</h2>
+      <h2 class="mb-4 font-serif text-xl font-semibold tracking-wide">
+        Choose Your Order
+      </h2>
 
       {
         fandomLists.length === 0 ? (

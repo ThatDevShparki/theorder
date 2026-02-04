@@ -28,10 +28,9 @@ export default function ProgressToggle({
       onCheckedChange={() => toggle()}
       disabled={isLoading}
       className={cn(
-        'h-5 w-5 rounded-sm border-2 transition-all',
-        isCompleted &&
-          'glow-magenta border-[var(--magenta)] bg-[var(--magenta)]',
-        isInProgress && 'border-[var(--cyan)]',
+        'h-5 w-5 rounded-sm border-2 transition-colors',
+        isCompleted && 'glow-magenta border-primary bg-primary',
+        isInProgress && 'border-accent',
         !isCompleted && !isInProgress && 'border-muted-foreground/50',
         className
       )}

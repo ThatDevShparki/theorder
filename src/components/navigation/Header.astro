@@ -1,0 +1,38 @@
+---
+interface Props {
+  currentPath?: string
+}
+
+const { currentPath = '' } = Astro.props
+
+const navLinks = [
+  { href: '/', label: 'Browse' },
+  { href: '/dashboard', label: 'Dashboard' },
+]
+---
+
+<header class="border-border bg-background border-b">
+  <nav class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
+    <a href="/" class="flex items-center gap-2">
+      <span class="text-2xl font-bold tracking-wide">The Order</span>
+    </a>
+
+    <div class="flex items-center gap-6">
+      {
+        navLinks.map((link) => (
+          <a
+            href={link.href}
+            class:list={[
+              'hover:text-foreground text-sm font-medium transition-colors',
+              currentPath === link.href
+                ? 'text-foreground'
+                : 'text-muted-foreground',
+            ]}
+          >
+            {link.label}
+          </a>
+        ))
+      }
+    </div>
+  </nav>
+</header>

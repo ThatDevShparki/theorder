@@ -1,0 +1,92 @@
+---
+import EntryCard from '@/components/cards/EntryCard.astro'
+import type { Layer, EntryData } from '@/lib/content-utils'
+
+interface Props {
+  layer: Layer
+  entryMap: Map<string, EntryData>
+  listId: string
+  depth?: number
+  ProgressToggle: typeof import('@/components/tracking/ProgressToggle').default
+}
+
+const { layer, entryMap, listId, depth = 0, ProgressToggle } = Astro.props
+
+// Depth-based styling
+const depthStyles = [
+  'border-l-4 border-[var(--magenta)]/50',
+  'border-l-4 border-[var(--cyan)]/50',
+  'border-l-4 border-[var(--purple)]/50',
+  'border-l-4 border-[var(--gold)]/50',
+]
+
+const borderStyle = layer.title ? depthStyles[depth % depthStyles.length] : ''
+---
+
+<div class:list={['space-y-3', { 'pl-4': depth > 0 }]}>
+  {
+    layer.title && (
+      <div class:list={['py-2 pl-4', borderStyle]}>
+        <h3
+          class:list={[
+            'font-semibold',
+            depth === 0 ? 'text-xl' : depth === 1 ? 'text-lg' : 'text-base',
+          ]}
+        >
+          {layer.title}
+        </h3>
+        {layer.description && (
+          <p class="text-muted-foreground mt-1 text-sm">{layer.description}</p>
+        )}
+      </div>
+    )
+  }
+
+  {
+    layer.entries && layer.entries.length > 0 && (
+      <div class="space-y-2">
+        {layer.entries.map((entryId) => {
+          const entry = entryMap.get(entryId)
+          if (!entry) {
+            console.warn(`Entry not found: ${entryId}`)
+            return null
+          }
+          return (
+            <EntryCard
+              id={entry.id}
+              title={entry.title}
+              type={entry.type}
+              releaseDate={entry.releaseDate}
+              description={entry.description}
+              runtime={entry.runtime}
+              seasonNumber={entry.seasonNumber}
+              episodeNumber={entry.episodeNumber}
+              showTitle={entry.showTitle}
+              compact
+            >
+              <ProgressToggle
+                slot="checkbox"
+                client:visible
+                listId={listId}
+                entryId={entry.id}
+              />
+            </EntryCard>
+          )
+        })}
+      </div>
+    )
+  }
+
+  {
+    layer.children &&
+      (layer.children as Layer[]).map((child) => (
+        <Astro.self
+          layer={child}
+          entryMap={entryMap}
+          listId={listId}
+          depth={depth + 1}
+          ProgressToggle={ProgressToggle}
+        />
+      ))
+  }
+</div>

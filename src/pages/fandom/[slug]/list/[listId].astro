@@ -1,0 +1,113 @@
+---
+import { getCollection } from 'astro:content'
+import Layout from '@/layouts/main.astro'
+import Header from '@/components/navigation/Header.astro'
+import DbStatusBanner from '@/components/status/DbStatusBanner'
+import ListLayer from '@/components/lists/ListLayer.astro'
+import ListProgressBar from '@/components/tracking/ListProgressBar'
+import ProgressToggle from '@/components/tracking/ProgressToggle'
+import { countEntries, createListId, type EntryData } from '@/lib/content-utils'
+
+export async function getStaticPaths() {
+  const lists = await getCollection('lists')
+
+  return lists.map((list) => {
+    // Extract fandom slug from the collection ID (e.g., "star-wars/lists/chronological")
+    const fandomSlug = list.id.split('/')[0]
+
+    return {
+      params: {
+        slug: fandomSlug,
+        listId: list.data.id,
+      },
+      props: { list, fandomSlug },
+    }
+  })
+}
+
+const { list, fandomSlug } = Astro.props
+const compositeListId = createListId(fandomSlug, list.data.id)
+const totalEntries = countEntries(list.data.structure)
+
+// Get fandom info
+const fandoms = await getCollection('fandoms')
+const fandom = fandoms.find((f) => f.data.id === fandomSlug)
+const fandomName = fandom?.data.name ?? fandomSlug
+
+// Get entries for this fandom
+const allEntries = await getCollection('entries')
+const fandomEntries = allEntries.filter((e) =>
+  e.id.startsWith(fandomSlug + '/')
+)
+
+// Create a map of entry ID to entry data for quick lookup
+const entryMap = new Map<string, EntryData>()
+fandomEntries.forEach((entry) => {
+  entryMap.set(entry.data.id, entry.data as EntryData)
+})
+---
+
+<Layout title={`The Order | ${list.data.title}`}>
+  <DbStatusBanner client:load />
+  <Header />
+
+  <main class="mx-auto max-w-4xl px-4 py-8">
+    {/* Breadcrumb */}
+    <nav class="text-muted-foreground mb-6 text-sm">
+      <a href="/" class="hover:text-foreground">Browse</a>
+      <span class="mx-2">→</span>
+      <a href={`/fandom/${fandomSlug}`} class="hover:text-foreground">
+        {fandomName}
+      </a>
+      <span class="mx-2">→</span>
+      <span class="text-foreground">{list.data.title}</span>
+    </nav>
+
+    {/* List Header */}
+    <header class="mb-8">
+      <h1 class="text-3xl font-bold tracking-wide">{list.data.title}</h1>
+      {
+        list.data.description && (
+          <p class="text-muted-foreground mt-2">{list.data.description}</p>
+        )
+      }
+      <div
+        class="text-muted-foreground mt-4 flex items-center gap-4 font-mono text-sm"
+      >
+        <span>{totalEntries} entries</span>
+        {
+          list.data.estimatedRuntime && (
+            <>
+              <span>•</span>
+              <span>{list.data.estimatedRuntime}</span>
+            </>
+          )
+        }
+      </div>
+    </header>
+
+    {/* Progress Bar */}
+    <div class="bg-elevated mb-8 rounded-xl p-4">
+      <ListProgressBar
+        client:visible
+        listId={compositeListId}
+        totalEntries={totalEntries}
+        showDetails={true}
+      />
+    </div>
+
+    {/* List Content */}
+    <section class="space-y-6">
+      {
+        list.data.structure.map((layer) => (
+          <ListLayer
+            layer={layer}
+            entryMap={entryMap}
+            listId={compositeListId}
+            ProgressToggle={ProgressToggle}
+          />
+        ))
+      }
+    </section>
+  </main>
+</Layout>

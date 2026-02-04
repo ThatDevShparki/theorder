@@ -1,0 +1,89 @@
+---
+import {
+  getEntryTypeLabel,
+  getEntryTypeColor,
+  formatDuration,
+  getYear,
+} from '@/lib/content-utils'
+
+interface Props {
+  id: string
+  title: string
+  type: string
+  releaseDate: string
+  description?: string
+  runtime?: number
+  seasonNumber?: number
+  episodeNumber?: number
+  showTitle?: string
+  compact?: boolean
+}
+
+const {
+  id: _id,
+  title,
+  type,
+  releaseDate,
+  description,
+  runtime,
+  seasonNumber,
+  episodeNumber,
+  showTitle,
+  compact = false,
+} = Astro.props
+
+const typeLabel = getEntryTypeLabel(type)
+const typeColor = getEntryTypeColor(type)
+const year = getYear(releaseDate)
+const displayRuntime = runtime ? formatDuration(runtime) : undefined
+
+// Episode display
+const episodeInfo =
+  type === 'tv-episode' && seasonNumber && episodeNumber
+    ? `S${seasonNumber}E${episodeNumber}`
+    : null
+---
+
+<div
+  class:list={[
+    'group bg-elevated hover:bg-hover flex items-start gap-4 rounded-lg p-4 transition-colors',
+    { 'py-3': compact },
+  ]}
+>
+  {/* Checkbox slot */}
+  <div class="flex-shrink-0 pt-1">
+    <slot name="checkbox" />
+  </div>
+
+  {/* Content */}
+  <div class="min-w-0 flex-1">
+    <div class="flex items-start justify-between gap-2">
+      <div class="min-w-0 flex-1">
+        <h4 class="leading-tight font-medium">
+          {title}
+        </h4>
+        <div
+          class="text-muted-foreground mt-0.5 flex flex-wrap items-center gap-2 text-sm"
+        >
+          {episodeInfo && <span class="font-mono">{episodeInfo}</span>}
+          {showTitle && <span>{showTitle}</span>}
+          <span>{year}</span>
+          {displayRuntime && <span>• {displayRuntime}</span>}
+        </div>
+      </div>
+      <span
+        class:list={['rounded-full px-2 py-0.5 text-xs font-medium', typeColor]}
+      >
+        {typeLabel}
+      </span>
+    </div>
+
+    {
+      !compact && description && (
+        <p class="text-muted-foreground mt-2 line-clamp-2 text-sm">
+          {description}
+        </p>
+      )
+    }
+  </div>
+</div>

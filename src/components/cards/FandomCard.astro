@@ -1,0 +1,44 @@
+---
+interface Props {
+  id: string
+  name: string
+  description?: string
+  href?: string
+}
+
+const { id, name, description, href } = Astro.props
+const linkHref = href ?? `/fandom/${id}`
+---
+
+<a
+  href={linkHref}
+  class="group bg-elevated hover:bg-hover hover:glow-magenta block overflow-hidden rounded-xl transition-all"
+>
+  <div
+    class="aspect-video bg-gradient-to-br from-[var(--purple)]/30 to-[var(--magenta)]/30"
+  >
+    {/* Placeholder for cover image */}
+  </div>
+  <div class="p-4">
+    <div class="flex items-start justify-between gap-2">
+      <div class="min-w-0 flex-1">
+        <h3
+          class="truncate text-lg font-semibold group-hover:text-[var(--magenta)]"
+        >
+          {name}
+        </h3>
+        {
+          description && (
+            <p class="text-muted-foreground mt-1 line-clamp-2 text-sm">
+              {description}
+            </p>
+          )
+        }
+      </div>
+      <slot name="action" />
+    </div>
+    <div class="mt-3">
+      <slot />
+    </div>
+  </div>
+</a>

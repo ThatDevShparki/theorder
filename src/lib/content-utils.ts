@@ -14,6 +14,15 @@ export interface Layer {
 }
 
 /**
+ * Link to external service (streaming, purchase, etc.)
+ */
+export interface EntryLink {
+  label: string
+  url: string
+  type?: 'stream' | 'purchase' | 'rent' | 'free' | 'library'
+}
+
+/**
  * Entry data shape (from entries collection)
  */
 export interface EntryData {
@@ -32,6 +41,7 @@ export interface EntryData {
   rating?: string
   language?: string
   tags?: string[]
+  links?: EntryLink[]
 }
 
 /**

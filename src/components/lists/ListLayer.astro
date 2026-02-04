@@ -1,5 +1,5 @@
 ---
-import EntryCard from '@/components/cards/EntryCard.astro'
+import { ExpandableEntryCard } from '@/components/cards/ExpandableEntryCard'
 import ProgressToggle from '@/components/tracking/ProgressToggle'
 import type { Layer, EntryData } from '@/lib/content-utils'
 
@@ -52,7 +52,8 @@ const borderStyle = layer.title ? depthStyles[depth % depthStyles.length] : ''
             return null
           }
           return (
-            <EntryCard
+            <ExpandableEntryCard
+              client:visible
               id={entry.id}
               title={entry.title}
               type={entry.type}
@@ -62,15 +63,18 @@ const borderStyle = layer.title ? depthStyles[depth % depthStyles.length] : ''
               seasonNumber={entry.seasonNumber}
               episodeNumber={entry.episodeNumber}
               showTitle={entry.showTitle}
+              links={entry.links}
+              directors={entry.directors}
+              authors={entry.authors}
+              rating={entry.rating}
               compact
             >
               <ProgressToggle
-                slot="checkbox"
                 client:visible
                 entryId={entry.id}
                 fandomId={fandomId}
               />
-            </EntryCard>
+            </ExpandableEntryCard>
           )
         })}
       </div>

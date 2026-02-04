@@ -20,7 +20,9 @@ const navLinks = [
   >
   </div>
 
-  <nav class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
+  <nav
+    class="mx-auto flex max-w-6xl items-center justify-between px-3 py-2 sm:px-4 sm:py-3"
+  >
     <a href="/" class="group flex items-center gap-3">
       {/* Logo mark */}
       <div
@@ -28,32 +30,38 @@ const navLinks = [
       >
         <span class="text-accent font-mono text-sm font-bold">TO</span>
       </div>
+      {/* Logo text */}
       <div class="flex flex-col">
         <span
-          class="font-serif text-xl font-semibold tracking-[0.2em] uppercase"
+          class="font-serif text-base font-semibold tracking-[0.15em] whitespace-nowrap uppercase sm:text-xl sm:tracking-[0.2em]"
         >
           The Order
         </span>
+        {/* Subheading - hidden on mobile */}
         <span
-          class="text-muted-foreground font-mono text-[10px] tracking-widest"
-          >CANON TRACKER v1.0</span
+          class="text-muted-foreground hidden font-mono text-[10px] tracking-widest sm:block"
         >
+          CANON TRACKER v1.0
+        </span>
       </div>
     </a>
 
-    <div class="flex items-center gap-1">
+    <div class="flex items-center">
       {
         navLinks.map((link) => (
           <a
             href={link.href}
             class:list={[
-              'group relative px-4 py-2 font-mono text-sm tracking-wide transition-all',
+              'group relative px-3 py-2 font-mono text-sm tracking-wide transition-all sm:px-4',
               currentPath === link.href
                 ? 'text-accent'
                 : 'text-muted-foreground hover:text-foreground',
             ]}
           >
-            <span class="text-accent/50 mr-2 text-xs">{link.code}</span>
+            {/* Nav codes - hidden on mobile */}
+            <span class="text-accent/50 mr-2 hidden text-xs sm:inline">
+              {link.code}
+            </span>
             {link.label}
             {/* Active indicator */}
             {currentPath === link.href && (

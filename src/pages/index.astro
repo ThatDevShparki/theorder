@@ -29,30 +29,32 @@ const fandoms = fandomsCollection.map((f) => ({
     </div>
 
     {/* Hero section */}
-    <header class="relative py-16 text-center md:py-24">
+    <header class="relative py-10 text-center sm:py-16 md:py-24">
       {/* Decorative elements */}
       <div
-        class="absolute top-8 left-1/2 h-px w-48 -translate-x-1/2 bg-gradient-to-r from-transparent via-[var(--cyan)] to-transparent opacity-30"
+        class="absolute top-6 left-1/2 h-px w-32 -translate-x-1/2 bg-gradient-to-r from-transparent via-[var(--cyan)] to-transparent opacity-30 sm:top-8 sm:w-48"
         aria-hidden="true"
       >
       </div>
 
       <div class="mx-auto max-w-2xl px-4">
         <p
-          class="text-accent mb-4 font-mono text-xs tracking-[0.3em] uppercase"
+          class="text-accent mb-3 font-mono text-[10px] tracking-[0.3em] uppercase sm:mb-4 sm:text-xs"
         >
           Canon Tracking System
         </p>
         <h1
-          class="font-serif text-5xl font-bold tracking-[0.15em] uppercase md:text-7xl"
+          class="font-serif text-4xl font-bold tracking-[0.15em] uppercase sm:text-5xl md:text-7xl"
         >
           The Order
         </h1>
         <div
-          class="mx-auto mt-6 h-px w-32 bg-gradient-to-r from-transparent via-[var(--magenta)] to-transparent"
+          class="mx-auto mt-4 h-px w-24 bg-gradient-to-r from-transparent via-[var(--magenta)] to-transparent sm:mt-6 sm:w-32"
         >
         </div>
-        <p class="text-muted-foreground mt-6 text-lg md:text-xl">
+        <p
+          class="text-muted-foreground mt-4 text-base sm:mt-6 sm:text-lg md:text-xl"
+        >
           Navigate your journey through legendary universes.
           <br />
           <span class="text-accent/80">Every story. In order.</span>
@@ -60,25 +62,27 @@ const fandoms = fandomsCollection.map((f) => ({
       </div>
 
       <div
-        class="absolute bottom-8 left-1/2 h-px w-48 -translate-x-1/2 bg-gradient-to-r from-transparent via-[var(--cyan)] to-transparent opacity-30"
+        class="absolute bottom-6 left-1/2 h-px w-32 -translate-x-1/2 bg-gradient-to-r from-transparent via-[var(--cyan)] to-transparent opacity-30 sm:bottom-8 sm:w-48"
         aria-hidden="true"
       >
       </div>
     </header>
 
     {/* Fandoms section */}
-    <section class="relative mx-auto max-w-6xl px-4 pb-16">
-      <div class="mb-8 flex items-center gap-4">
+    <section class="relative mx-auto max-w-6xl px-3 pb-10 sm:px-4 sm:pb-16">
+      <div class="mb-6 flex items-center gap-3 sm:mb-8 sm:gap-4">
         <div
           class="h-px flex-1 bg-gradient-to-r from-[var(--cyan)]/30 to-transparent"
         >
         </div>
         <h2
-          class="text-muted-foreground font-mono text-xs tracking-[0.2em] uppercase"
+          class="text-muted-foreground font-mono text-[10px] tracking-[0.2em] uppercase sm:text-xs"
         >
           Available Archives
         </h2>
-        <span class="text-accent font-mono text-xs">[{fandoms.length}]</span>
+        <span class="text-accent font-mono text-[10px] sm:text-xs"
+          >[{fandoms.length}]</span
+        >
         <div
           class="h-px flex-1 bg-gradient-to-l from-[var(--cyan)]/30 to-transparent"
         >
@@ -96,7 +100,7 @@ const fandoms = fandomsCollection.map((f) => ({
             </p>
           </div>
         ) : (
-          <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div class="grid gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
             {fandoms.map((fandom, index) => (
               <div
                 class="animate-in fade-in slide-in-from-bottom-4"
@@ -115,13 +119,15 @@ const fandoms = fandomsCollection.map((f) => ({
     </section>
   </main>
 
-  <footer class="border-border/30 relative border-t py-12">
+  <footer class="border-border/30 relative border-t py-8 sm:py-12">
     <div
-      class="absolute top-0 left-1/2 h-px w-32 -translate-x-1/2 bg-gradient-to-r from-transparent via-[var(--cyan)] to-transparent opacity-40"
+      class="absolute top-0 left-1/2 h-px w-24 -translate-x-1/2 bg-gradient-to-r from-transparent via-[var(--cyan)] to-transparent opacity-40 sm:w-32"
     >
     </div>
     <div class="text-center">
-      <p class="text-muted-foreground font-mono text-xs tracking-widest">
+      <p
+        class="text-muted-foreground font-mono text-[10px] tracking-widest sm:text-xs"
+      >
         THE ORDER // CANON TRACKER // v1.0
       </p>
     </div>

@@ -27,11 +27,11 @@ const sagaConfig = {
   {
     /* Saga (depth 0) - Full boxed design */
     depth === 0 && layer.title && (
-      <div class="mb-6 rounded-lg border border-[var(--magenta)]/30 bg-[var(--magenta)]/5 p-4">
+      <div class="mb-4 rounded-lg border border-[var(--magenta)]/30 bg-[var(--magenta)]/5 p-3 sm:mb-6 sm:p-4">
         {/* Header row with label and line */}
-        <div class="mb-2 flex items-center gap-3">
+        <div class="mb-1.5 flex items-center gap-2 sm:mb-2 sm:gap-3">
           <span
-            class="rounded px-2 py-0.5 font-mono text-[10px] tracking-widest"
+            class="rounded px-1.5 py-0.5 font-mono text-[9px] tracking-widest sm:px-2 sm:text-[10px]"
             style={`background: ${sagaConfig.color}20; color: ${sagaConfig.color};`}
           >
             SAGA
@@ -43,18 +43,13 @@ const sagaConfig = {
         </div>
 
         {/* Title */}
-        <h3
-          class:list={[
-            'font-serif font-bold tracking-wider uppercase',
-            sagaConfig.titleSize,
-          ]}
-        >
+        <h3 class="font-serif text-lg font-bold tracking-wider uppercase sm:text-xl">
           {layer.title}
         </h3>
 
         {/* Description */}
         {layer.description && (
-          <p class="mt-2 text-sm text-[var(--muted-foreground)]">
+          <p class="mt-1.5 text-xs text-[var(--muted-foreground)] sm:mt-2 sm:text-sm">
             {layer.description}
           </p>
         )}
@@ -65,15 +60,15 @@ const sagaConfig = {
   {
     /* Arc (depth 1+) - Simple heading only */
     depth > 0 && layer.title && (
-      <div class="mb-3">
-        <div class="flex items-center gap-3">
-          <h4 class="font-mono text-sm font-medium tracking-wider text-[var(--cyan)] uppercase">
+      <div class="mb-2 sm:mb-3">
+        <div class="flex items-center gap-2 sm:gap-3">
+          <h4 class="font-mono text-xs font-medium tracking-wider text-[var(--cyan)] uppercase sm:text-sm">
             {layer.title}
           </h4>
           <div class="h-px flex-1 bg-[var(--cyan)]/20" />
         </div>
         {layer.description && (
-          <p class="mt-1 text-xs text-[var(--muted-foreground)]">
+          <p class="mt-0.5 text-[11px] text-[var(--muted-foreground)] sm:mt-1 sm:text-xs">
             {layer.description}
           </p>
         )}
@@ -84,17 +79,17 @@ const sagaConfig = {
   {/* Entries - tighter spacing within groups */}
   {
     layer.entries && layer.entries.length > 0 && (
-      <div class="flex flex-col gap-3">
+      <div class="flex flex-col gap-2 sm:gap-3">
         {layer.entries.map((entryId) => {
           const entry = entryMap.get(entryId)
           if (!entry) {
             console.warn(`Entry not found: ${entryId}`)
             return (
-              <div class="rounded-lg border border-[var(--destructive)]/30 bg-[var(--destructive)]/10 p-3 text-sm">
+              <div class="rounded-lg border border-[var(--destructive)]/30 bg-[var(--destructive)]/10 p-2 text-xs sm:p-3 sm:text-sm">
                 <span class="font-medium text-[var(--destructive)]">
                   Missing entry:
                 </span>
-                <code class="ml-2 font-mono text-xs text-[var(--muted-foreground)]">
+                <code class="ml-2 font-mono text-[10px] text-[var(--muted-foreground)] sm:text-xs">
                   {entryId}
                 </code>
               </div>
@@ -133,7 +128,7 @@ const sagaConfig = {
   {/* Arcs within saga - moderate spacing between arcs */}
   {
     isSaga(layer) && layer.children && layer.children.length > 0 && (
-      <div class="space-y-8">
+      <div class="space-y-6 sm:space-y-8">
         {layer.children.map((child) => (
           <Astro.self
             layer={child}

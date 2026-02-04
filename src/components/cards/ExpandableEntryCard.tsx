@@ -174,11 +174,15 @@ export const ExpandableEntryCard = memo(function ExpandableEntryCard({
 
         {/* Main card content */}
         <div
-          className={cn('flex items-start gap-4 p-4 pl-5', compact && 'py-3')}
+          className={cn(
+            'flex items-start gap-3 p-3 pl-4 sm:gap-4 sm:p-4 sm:pl-5',
+            compact && 'py-2.5 sm:py-3'
+          )}
         >
           {/* Checkbox slot - stops propagation to prevent triggering expand */}
+          {/* 44px touch target wrapper around checkbox */}
           <div
-            className="flex-shrink-0 pt-0.5"
+            className="-m-2 flex flex-shrink-0 items-center justify-center p-2"
             onClick={(e) => e.stopPropagation()}
           >
             {children}
@@ -195,32 +199,34 @@ export const ExpandableEntryCard = memo(function ExpandableEntryCard({
               aria-expanded={isOpen}
               aria-controls={`entry-details-${id}`}
             >
-              <div className="flex items-start justify-between gap-3">
+              <div className="flex items-start justify-between gap-2 sm:gap-3">
                 <div className="min-w-0 flex-1">
-                  <h4 className="truncate leading-tight font-medium">
+                  <h4 className="truncate text-sm leading-tight font-medium sm:text-base">
                     {title}
                   </h4>
-                  <div className="mt-1 flex flex-wrap items-center gap-2 font-mono text-xs text-[var(--muted-foreground)]">
+                  <div className="mt-0.5 flex flex-wrap items-center gap-1.5 font-mono text-[11px] text-[var(--muted-foreground)] sm:mt-1 sm:gap-2 sm:text-xs">
                     {episodeInfo && (
                       <span className="text-[var(--accent)]">
                         {episodeInfo}
                       </span>
                     )}
                     {showTitle && (
-                      <span className="max-w-[150px] truncate">
+                      <span className="max-w-[100px] truncate sm:max-w-[150px]">
                         {showTitle}
                       </span>
                     )}
                     <span className="opacity-60">{year}</span>
                     {displayRuntime && (
-                      <span className="opacity-60">• {displayRuntime}</span>
+                      <span className="hidden opacity-60 sm:inline">
+                        • {displayRuntime}
+                      </span>
                     )}
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-shrink-0 items-center gap-1.5 sm:gap-2">
                   <span
                     className={cn(
-                      'rounded border px-2 py-0.5 font-mono text-[10px] font-medium tracking-wider uppercase',
+                      'rounded border px-1.5 py-0.5 font-mono text-[9px] font-medium tracking-wider uppercase sm:px-2 sm:text-[10px]',
                       typeColor
                     )}
                   >
@@ -244,7 +250,7 @@ export const ExpandableEntryCard = memo(function ExpandableEntryCard({
         <CollapsibleContent>
           <div
             id={`entry-details-${id}`}
-            className="border-border/50 space-y-4 border-t px-4 pt-3 pb-4"
+            className="border-border/50 space-y-3 border-t px-3 pt-3 pb-3 sm:space-y-4 sm:px-4 sm:pb-4"
           >
             {/* Description */}
             {description && (
@@ -253,7 +259,7 @@ export const ExpandableEntryCard = memo(function ExpandableEntryCard({
 
             {/* Metadata row */}
             {(directors?.length || authors?.length || rating) && (
-              <div className="text-muted-foreground flex flex-wrap gap-x-4 gap-y-1 text-sm">
+              <div className="text-muted-foreground flex flex-wrap gap-x-3 gap-y-1 text-xs sm:gap-x-4 sm:text-sm">
                 {directors && directors.length > 0 && (
                   <span>
                     <span className="text-foreground/70">Director:</span>{' '}
@@ -287,11 +293,11 @@ export const ExpandableEntryCard = memo(function ExpandableEntryCard({
                       href={link.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="bg-background hover:bg-accent inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-sm transition-colors"
+                      className="bg-background hover:bg-accent inline-flex min-h-[44px] items-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors"
                     >
                       {getLinkIcon(link.type)}
                       <span>{link.label}</span>
-                      <span className="text-muted-foreground text-xs">
+                      <span className="text-muted-foreground hidden text-xs sm:inline">
                         ({getLinkTypeLabel(link.type)})
                       </span>
                     </a>

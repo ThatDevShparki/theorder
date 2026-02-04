@@ -210,9 +210,15 @@ export function getEntryTypeColor(type: string): string {
 
 /**
  * Parse year from release date string
+ * Returns current year as fallback for invalid dates
  */
 export function getYear(releaseDate: string): number {
-  return new Date(releaseDate).getFullYear()
+  if (!releaseDate) return new Date().getFullYear()
+  const date = new Date(releaseDate)
+  const year = date.getFullYear()
+  // Check for Invalid Date (NaN)
+  if (Number.isNaN(year)) return new Date().getFullYear()
+  return year
 }
 
 /**

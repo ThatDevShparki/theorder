@@ -49,7 +49,14 @@ const borderStyle = layer.title ? depthStyles[depth % depthStyles.length] : ''
           const entry = entryMap.get(entryId)
           if (!entry) {
             console.warn(`Entry not found: ${entryId}`)
-            return null
+            return (
+              <div class="bg-destructive/10 border-destructive/30 rounded-lg border p-3 text-sm">
+                <span class="text-destructive font-medium">Missing entry:</span>
+                <code class="text-muted-foreground ml-2 font-mono text-xs">
+                  {entryId}
+                </code>
+              </div>
+            )
           }
           return (
             <ExpandableEntryCard

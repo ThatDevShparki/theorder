@@ -71,7 +71,11 @@ function formatDuration(minutes: number): string {
 }
 
 function getYear(releaseDate: string): number {
-  return new Date(releaseDate).getFullYear()
+  if (!releaseDate) return new Date().getFullYear()
+  const date = new Date(releaseDate)
+  const year = date.getFullYear()
+  if (Number.isNaN(year)) return new Date().getFullYear()
+  return year
 }
 
 function getLinkIcon(type?: string) {
@@ -106,6 +110,7 @@ function getLinkTypeLabel(type?: string): string {
 }
 
 export function ExpandableEntryCard({
+  id,
   title,
   type,
   releaseDate,
@@ -163,7 +168,7 @@ export function ExpandableEntryCard({
           <div className="min-w-0 flex-1">
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0 flex-1">
-                <h4 className="leading-tight font-medium">{title}</h4>
+                <h4 className="truncate leading-tight font-medium">{title}</h4>
                 <div className="text-muted-foreground mt-0.5 flex flex-wrap items-center gap-2 text-sm">
                   {episodeInfo && (
                     <span className="font-mono">{episodeInfo}</span>
@@ -188,6 +193,8 @@ export function ExpandableEntryCard({
                       variant="ghost"
                       size="icon-xs"
                       className="text-muted-foreground hover:text-foreground"
+                      aria-expanded={isOpen}
+                      aria-controls={`entry-details-${id}`}
                     >
                       <ChevronDown
                         className={cn(
@@ -196,7 +203,7 @@ export function ExpandableEntryCard({
                         )}
                       />
                       <span className="sr-only">
-                        {isOpen ? 'Collapse' : 'Expand'} details
+                        {isOpen ? 'Collapse' : 'Expand'} details for {title}
                       </span>
                     </Button>
                   </CollapsibleTrigger>
@@ -208,7 +215,10 @@ export function ExpandableEntryCard({
 
         {/* Expandable content */}
         <CollapsibleContent>
-          <div className="border-border/50 space-y-4 border-t px-4 pt-3 pb-4">
+          <div
+            id={`entry-details-${id}`}
+            className="border-border/50 space-y-4 border-t px-4 pt-3 pb-4"
+          >
             {/* Description */}
             {description && (
               <p className="text-muted-foreground text-sm">{description}</p>

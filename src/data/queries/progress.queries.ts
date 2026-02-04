@@ -272,12 +272,15 @@ export async function computeListStats(
   if (earliestStart !== null && completedCount > 0) {
     const daysSinceStart =
       (Date.now() - (earliestStart as Date).getTime()) / (1000 * 60 * 60 * 24)
-    if (daysSinceStart >= 1) {
-      speed = Math.round((completedCount / daysSinceStart) * 7 * 10) / 10
-      if (speed > 0) {
-        projectedDaysRemaining = Math.ceil(
-          (notStartedCount + inProgressCount) / (speed / 7)
-        )
+    if (daysSinceStart >= 1 && Number.isFinite(daysSinceStart)) {
+      const rawSpeed = (completedCount / daysSinceStart) * 7
+      speed = Number.isFinite(rawSpeed) ? Math.round(rawSpeed * 10) / 10 : null
+      if (speed !== null && speed > 0) {
+        const remaining = notStartedCount + inProgressCount
+        const daysCalc = remaining / (speed / 7)
+        projectedDaysRemaining = Number.isFinite(daysCalc)
+          ? Math.ceil(daysCalc)
+          : null
       }
     }
   }

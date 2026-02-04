@@ -195,13 +195,13 @@ function FandomProgress({
         href={`/fandom/${fandom.id}`}
         className="group flex items-center justify-between"
       >
-        <div className="flex items-center gap-2">
+        <div className="flex min-w-0 flex-1 items-center gap-2">
           {isFavorite && (
-            <span className="text-[var(--gold)]" title="Favorited">
+            <span className="shrink-0 text-[var(--gold)]" title="Favorited">
               ★
             </span>
           )}
-          <h3 className="text-xl font-semibold group-hover:text-[var(--magenta)]">
+          <h3 className="truncate text-xl font-semibold group-hover:text-[var(--magenta)]">
             {fandom.name}
           </h3>
         </div>
@@ -256,7 +256,9 @@ function ListProgressRow({
     for (const entryId of entryIds) {
       const status = completions.get(entryId)
       if (!status || status !== 'completed') {
-        return allEntries[entryId]
+        const entry = allEntries[entryId]
+        // Skip if entry data is missing
+        if (entry) return entry
       }
     }
     return null

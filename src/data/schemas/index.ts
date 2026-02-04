@@ -17,6 +17,15 @@ export {
 } from './interests.schema'
 
 export {
+  FavoriteTypeSchema,
+  FavoriteSchema,
+  createFavoriteId,
+  parseFavoriteId,
+  type FavoriteType,
+  type Favorite,
+} from './favorites.schema'
+
+export {
   EXPORT_VERSION,
   ExportDataSchema,
   type ExportData,

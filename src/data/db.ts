@@ -1,5 +1,10 @@
 import Dexie, { type Table } from 'dexie'
-import type { ListProgress, FandomInterest, EntryCompletion } from './schemas'
+import type {
+  ListProgress,
+  FandomInterest,
+  EntryCompletion,
+  Favorite,
+} from './schemas'
 
 /**
  * Database status indicating storage mode
@@ -16,25 +21,30 @@ export type DbStatus =
  * Version history:
  *   1 - Initial schema: progress (list-based), interests
  *   2 - Global entry completion: entries table, simplified progress
+ *   3 - Favorites: unified favorites table for fandoms and lists
  */
 export class TheOrderDB extends Dexie {
   // Global entry completion status (shared across lists)
   entries!: Table<EntryCompletion, string>
   // List-level metadata (when started, completed)
   progress!: Table<ListProgress, string>
-  // User's fandom interests/favorites
+  // User's fandom interests/favorites (legacy, kept for compatibility)
   interests!: Table<FandomInterest, string>
+  // Unified favorites for fandoms and lists
+  favorites!: Table<Favorite, string>
 
   constructor(options?: { indexedDB?: IDBFactory }) {
     super('theorder', options)
 
-    this.version(2).stores({
+    this.version(3).stores({
       // entryId is primary key, fandomId for querying by fandom
       entries: 'entryId, fandomId',
       // listId is primary key
       progress: 'listId',
       // fandomId is primary key, priority for sorting
       interests: 'fandomId, priority',
+      // id is primary key (type:itemId), type and fandomId for querying
+      favorites: 'id, type, fandomId',
     })
   }
 }

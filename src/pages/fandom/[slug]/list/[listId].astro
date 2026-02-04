@@ -5,6 +5,7 @@ import Header from '@/components/navigation/Header.astro'
 import DbStatusBanner from '@/components/status/DbStatusBanner'
 import ListLayer from '@/components/lists/ListLayer.astro'
 import ListProgressBar from '@/components/tracking/ListProgressBar'
+import FavoriteButton from '@/components/favorites/FavoriteButton'
 import {
   flattenEntries,
   createListId,
@@ -69,7 +70,17 @@ fandomEntries.forEach((entry) => {
 
     {/* List Header */}
     <header class="mb-8">
-      <h1 class="text-3xl font-bold tracking-wide">{list.data.title}</h1>
+      <div class="flex items-start justify-between gap-4">
+        <h1 class="text-3xl font-bold tracking-wide">{list.data.title}</h1>
+        <FavoriteButton
+          client:visible
+          type="list"
+          itemId={compositeListId}
+          fandomId={fandomSlug}
+          variant="icon"
+          className="mt-1"
+        />
+      </div>
       {
         list.data.description && (
           <p class="text-muted-foreground mt-2">{list.data.description}</p>

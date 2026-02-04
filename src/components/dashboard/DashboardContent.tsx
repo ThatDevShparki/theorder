@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { useFandomInterests, useListProgress } from '@/hooks'
+import { useFavorites, useListProgress } from '@/hooks'
 import { Skeleton } from '@/components/ui/skeleton'
 import { flattenEntries, createListId } from '@/lib/content-utils'
 import { getDbStatus, initDatabase } from '@/data/db'
@@ -32,8 +32,11 @@ export default function DashboardContent({
   allFandoms,
   allLists,
 }: DashboardContentProps) {
-  const { isLoading: interestsLoading, fandomIds: interestFandomIds } =
-    useFandomInterests()
+  const {
+    isLoading: favoritesLoading,
+    fandomIds: favoriteFandomIds,
+    listIds: favoriteListIds,
+  } = useFavorites()
 
   // Track database availability reactively
   const [isDbReady, setIsDbReady] = useState(() => {
@@ -70,17 +73,29 @@ export default function DashboardContent({
     return Array.from(fandomIds)
   }, [allEntries])
 
-  // Combine interests and progress to get all active fandoms
+  // Combine favorites and progress to get all active fandoms
   const activeFandomIds = useMemo(() => {
-    const combined = new Set([...interestFandomIds, ...progressFandomIds])
+    // Include favorited fandoms
+    const combined = new Set([...favoriteFandomIds, ...progressFandomIds])
+    // Also include fandoms from favorited lists
+    favoriteListIds.forEach((listId) => {
+      const fandomId = listId.split('/')[0]
+      combined.add(fandomId)
+    })
     return Array.from(combined)
-  }, [interestFandomIds, progressFandomIds])
+  }, [favoriteFandomIds, progressFandomIds, favoriteListIds])
 
   // Filter to only active fandoms
   const activeFandoms = useMemo(() => {
     if (activeFandomIds.length === 0) return []
     return allFandoms.filter((f) => activeFandomIds.includes(f.id))
   }, [allFandoms, activeFandomIds])
+
+  // Create a set of favorited list IDs for quick lookup
+  const favoriteListIdSet = useMemo(
+    () => new Set(favoriteListIds),
+    [favoriteListIds]
+  )
 
   // Group lists by fandom
   const listsByFandom = useMemo(() => {
@@ -93,7 +108,7 @@ export default function DashboardContent({
     return map
   }, [allLists])
 
-  const isLoading = interestsLoading || (isDbReady && allEntries === undefined)
+  const isLoading = favoritesLoading || (isDbReady && allEntries === undefined)
 
   if (isLoading) {
     return (
@@ -129,7 +144,16 @@ export default function DashboardContent({
     <div className="space-y-6">
       {activeFandoms.map((fandom) => {
         const lists = listsByFandom.get(fandom.id) || []
-        return <FandomProgress key={fandom.id} fandom={fandom} lists={lists} />
+        const isFavorite = favoriteFandomIds.includes(fandom.id)
+        return (
+          <FandomProgress
+            key={fandom.id}
+            fandom={fandom}
+            lists={lists}
+            isFavorite={isFavorite}
+            favoriteListIds={favoriteListIdSet}
+          />
+        )
       })}
     </div>
   )
@@ -138,18 +162,32 @@ export default function DashboardContent({
 interface FandomProgressProps {
   fandom: FandomData
   lists: ListData[]
+  isFavorite: boolean
+  favoriteListIds: Set<string>
 }
 
-function FandomProgress({ fandom, lists }: FandomProgressProps) {
+function FandomProgress({
+  fandom,
+  lists,
+  isFavorite,
+  favoriteListIds,
+}: FandomProgressProps) {
   return (
     <div className="bg-elevated rounded-xl p-6">
       <a
         href={`/fandom/${fandom.id}`}
         className="group flex items-center justify-between"
       >
-        <h3 className="text-xl font-semibold group-hover:text-[var(--magenta)]">
-          {fandom.name}
-        </h3>
+        <div className="flex items-center gap-2">
+          {isFavorite && (
+            <span className="text-[var(--gold)]" title="Favorited">
+              ★
+            </span>
+          )}
+          <h3 className="text-xl font-semibold group-hover:text-[var(--magenta)]">
+            {fandom.name}
+          </h3>
+        </div>
         <span className="text-muted-foreground group-hover:text-foreground text-sm">
           View →
         </span>
@@ -157,9 +195,18 @@ function FandomProgress({ fandom, lists }: FandomProgressProps) {
 
       {lists.length > 0 && (
         <div className="mt-4 space-y-3">
-          {lists.map((list) => (
-            <ListProgressRow key={list.id} list={list} fandomId={fandom.id} />
-          ))}
+          {lists.map((list) => {
+            const listId = createListId(fandom.id, list.id)
+            const isListFavorite = favoriteListIds.has(listId)
+            return (
+              <ListProgressRow
+                key={list.id}
+                list={list}
+                fandomId={fandom.id}
+                isFavorite={isListFavorite}
+              />
+            )
+          })}
         </div>
       )}
     </div>
@@ -169,9 +216,10 @@ function FandomProgress({ fandom, lists }: FandomProgressProps) {
 interface ListProgressRowProps {
   list: ListData
   fandomId: string
+  isFavorite: boolean
 }
 
-function ListProgressRow({ list, fandomId }: ListProgressRowProps) {
+function ListProgressRow({ list, fandomId, isFavorite }: ListProgressRowProps) {
   const listId = createListId(fandomId, list.id)
   const entryIds = flattenEntries(list.structure)
   const { stats, isLoading } = useListProgress(listId, { entryIds, fandomId })
@@ -190,7 +238,8 @@ function ListProgressRow({ list, fandomId }: ListProgressRowProps) {
   return (
     <a href={`/fandom/${fandomId}/list/${list.id}`} className="group block">
       <div className="flex items-center justify-between text-sm">
-        <span className="text-muted-foreground group-hover:text-foreground">
+        <span className="text-muted-foreground group-hover:text-foreground flex items-center gap-1">
+          {isFavorite && <span className="text-xs text-[var(--gold)]">★</span>}
           {list.title}
         </span>
         <span className="font-mono text-[var(--magenta)]">

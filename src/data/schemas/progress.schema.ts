@@ -1,7 +1,7 @@
 import { z } from 'zod/v4'
 
 /**
- * Status of a single entry within a list
+ * Status of a single entry
  */
 export const EntryStatusSchema = z.enum([
   'not-started',
@@ -11,36 +11,43 @@ export const EntryStatusSchema = z.enum([
 export type EntryStatus = z.infer<typeof EntryStatusSchema>
 
 /**
- * Progress for a single entry within a list
+ * Global entry completion status
+ * Keyed by entryId - shared across all lists
  */
-export const EntryProgressSchema = z.object({
+export const EntryCompletionSchema = z.object({
+  // Primary key: entry ID (e.g., "phantom-menace")
   entryId: z.string(),
+  // Fandom this entry belongs to (for querying)
+  fandomId: z.string(),
   status: EntryStatusSchema,
   startedAt: z.date().optional(),
   completedAt: z.date().optional(),
   // For resumable content: "01:23:45" for video, "page 150" for book
   position: z.string().optional(),
 })
-export type EntryProgress = z.infer<typeof EntryProgressSchema>
+export type EntryCompletion = z.infer<typeof EntryCompletionSchema>
 
 /**
- * Progress for an entire list
- * This is the primary unit of progress tracking
+ * Progress metadata for a list (optional - for tracking when user started a list)
  */
 export const ListProgressSchema = z.object({
   // Composite key: "star-wars/chronological"
   listId: z.string(),
-
-  // When user first started this list
+  // When user first interacted with this list
   startedAt: z.date().optional(),
-
   // When user completed the entire list
   completedAt: z.date().optional(),
-
-  // Progress for each entry in the list
-  entries: z.array(EntryProgressSchema),
 })
 export type ListProgress = z.infer<typeof ListProgressSchema>
+
+// Legacy type for migration compatibility
+export interface EntryProgress {
+  entryId: string
+  status: EntryStatus
+  startedAt?: Date
+  completedAt?: Date
+  position?: string
+}
 
 /**
  * Computed stats for a list (not stored, derived from ListProgress)

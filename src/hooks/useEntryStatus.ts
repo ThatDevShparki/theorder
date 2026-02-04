@@ -2,7 +2,7 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { useCallback, useState, useEffect } from 'react'
 import { getDbStatus, initDatabase } from '@/data/db'
 import {
-  getListProgress,
+  getEntryCompletion,
   setEntryStatus as setEntryStatusQuery,
 } from '@/data/queries'
 import type { EntryStatus } from '@/data/schemas'
@@ -23,15 +23,15 @@ interface UseEntryStatusReturn {
 }
 
 /**
- * Hook for a single entry's status within a list
- * Optimized for individual ProgressToggle islands
+ * Hook for a single entry's global completion status
+ * Entry status is shared across all lists containing that entry
  *
- * @param listId - Composite list ID (e.g., "star-wars/chronological")
- * @param entryId - The entry ID within the list
+ * @param entryId - The entry ID (e.g., "phantom-menace")
+ * @param fandomId - The fandom this entry belongs to (e.g., "star-wars")
  */
 export function useEntryStatus(
-  listId: string,
-  entryId: string
+  entryId: string,
+  fandomId: string
 ): UseEntryStatusReturn {
   // Track database availability reactively
   const [isDbReady, setIsDbReady] = useState(() => {
@@ -49,51 +49,57 @@ export function useEntryStatus(
     }
   }, [])
 
-  // Live query for this specific entry's status
-  const status = useLiveQuery(
-    async (): Promise<EntryStatus> => {
-      if (!isDbReady) return 'not-started'
-
-      const progress = await getListProgress(listId)
-      if (!progress) return 'not-started'
-
-      const entry = progress.entries.find((e) => e.entryId === entryId)
-      return entry?.status ?? 'not-started'
+  // Live query for this entry's global completion status
+  // Returns { loaded: false } initially, then { loaded: true, data: ... } after query
+  const result = useLiveQuery(
+    async () => {
+      if (!isDbReady) return { loaded: false as const }
+      const data = await getEntryCompletion(entryId)
+      return { loaded: true as const, data }
     },
-    [listId, entryId, isDbReady],
-    'not-started' as EntryStatus
+    [entryId, isDbReady],
+    { loaded: false as const }
   )
+
+  const status: EntryStatus = result.loaded
+    ? (result.data?.status ?? 'not-started')
+    : 'not-started'
+  const queryLoading = !result.loaded
 
   // Set status - ensures db is initialized before writing
   const setStatus = useCallback(
     async (newStatus: EntryStatus) => {
-      // Ensure database is initialized
       const dbStatus = await initDatabase()
       if (dbStatus.mode === 'unavailable') return
-      await setEntryStatusQuery(listId, entryId, newStatus)
+      await setEntryStatusQuery(entryId, fandomId, newStatus)
     },
-    [listId, entryId]
+    [entryId, fandomId]
   )
 
   // Toggle between not-started and completed
   const toggle = useCallback(async () => {
-    // Ensure database is initialized
-    const dbStatus = await initDatabase()
-    if (dbStatus.mode === 'unavailable') return
+    try {
+      const dbStatus = await initDatabase()
+      if (dbStatus.mode === 'unavailable') {
+        console.warn('Database unavailable, cannot toggle entry status')
+        return
+      }
 
-    // Get current status fresh to avoid stale closure
-    const progress = await getListProgress(listId)
-    const entry = progress?.entries.find((e) => e.entryId === entryId)
-    const currentStatus = entry?.status ?? 'not-started'
+      // Get current status fresh to avoid stale closure
+      const current = await getEntryCompletion(entryId)
+      const currentStatus = current?.status ?? 'not-started'
 
-    const newStatus: EntryStatus =
-      currentStatus === 'completed' ? 'not-started' : 'completed'
-    await setEntryStatusQuery(listId, entryId, newStatus)
-  }, [listId, entryId])
+      const newStatus: EntryStatus =
+        currentStatus === 'completed' ? 'not-started' : 'completed'
+      await setEntryStatusQuery(entryId, fandomId, newStatus)
+    } catch (error) {
+      console.error('Failed to toggle entry status:', error)
+    }
+  }, [entryId, fandomId])
 
   return {
     status,
-    isLoading: status === undefined,
+    isLoading: queryLoading,
     setStatus,
     toggle,
     isCompleted: status === 'completed',

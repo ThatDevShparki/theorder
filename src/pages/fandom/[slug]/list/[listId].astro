@@ -5,7 +5,11 @@ import Header from '@/components/navigation/Header.astro'
 import DbStatusBanner from '@/components/status/DbStatusBanner'
 import ListLayer from '@/components/lists/ListLayer.astro'
 import ListProgressBar from '@/components/tracking/ListProgressBar'
-import { countEntries, createListId, type EntryData } from '@/lib/content-utils'
+import {
+  flattenEntries,
+  createListId,
+  type EntryData,
+} from '@/lib/content-utils'
 
 export async function getStaticPaths() {
   const lists = await getCollection('lists')
@@ -26,7 +30,8 @@ export async function getStaticPaths() {
 
 const { list, fandomSlug } = Astro.props
 const compositeListId = createListId(fandomSlug, list.data.id)
-const totalEntries = countEntries(list.data.structure)
+const entryIds = flattenEntries(list.data.structure)
+const totalEntries = entryIds.length
 
 // Get fandom info
 const fandoms = await getCollection('fandoms')
@@ -90,7 +95,8 @@ fandomEntries.forEach((entry) => {
       <ListProgressBar
         client:visible
         listId={compositeListId}
-        totalEntries={totalEntries}
+        entryIds={entryIds}
+        fandomId={fandomSlug}
         showDetails={true}
       />
     </div>
@@ -99,11 +105,7 @@ fandomEntries.forEach((entry) => {
     <section class="space-y-6">
       {
         list.data.structure.map((layer) => (
-          <ListLayer
-            layer={layer}
-            entryMap={entryMap}
-            listId={compositeListId}
-          />
+          <ListLayer layer={layer} entryMap={entryMap} fandomId={fandomSlug} />
         ))
       }
     </section>

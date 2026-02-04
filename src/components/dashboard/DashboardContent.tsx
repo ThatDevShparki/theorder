@@ -2,9 +2,9 @@ import { useMemo, useState, useEffect } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { useFandomInterests, useListProgress } from '@/hooks'
 import { Skeleton } from '@/components/ui/skeleton'
-import { countEntries, createListId } from '@/lib/content-utils'
+import { flattenEntries, createListId } from '@/lib/content-utils'
 import { getDbStatus, initDatabase } from '@/data/db'
-import { getAllProgress } from '@/data/queries'
+import { getAllCompletedEntries } from '@/data/queries'
 import type { Layer } from '@/lib/content-utils'
 
 interface FandomData {
@@ -51,28 +51,24 @@ export default function DashboardContent({
     }
   }, [])
 
-  // Get all progress to find fandoms with activity
-  const allProgress = useLiveQuery(
+  // Get all completed/in-progress entries to find fandoms with activity
+  const allEntries = useLiveQuery(
     async () => {
       if (!isDbReady) return []
-      return getAllProgress()
+      return getAllCompletedEntries()
     },
     [isDbReady],
     []
   )
 
-  // Extract fandom IDs from progress (listId format: "fandom-id/list-id")
+  // Extract fandom IDs from entries with progress
   const progressFandomIds = useMemo(() => {
     const fandomIds = new Set<string>()
-    allProgress.forEach((progress) => {
-      // Only count if there's actual progress (at least one entry started)
-      if (progress.entries.length > 0) {
-        const fandomId = progress.listId.split('/')[0]
-        fandomIds.add(fandomId)
-      }
+    allEntries.forEach((entry) => {
+      fandomIds.add(entry.fandomId)
     })
     return Array.from(fandomIds)
-  }, [allProgress])
+  }, [allEntries])
 
   // Combine interests and progress to get all active fandoms
   const activeFandomIds = useMemo(() => {
@@ -97,7 +93,7 @@ export default function DashboardContent({
     return map
   }, [allLists])
 
-  const isLoading = interestsLoading || (isDbReady && allProgress === undefined)
+  const isLoading = interestsLoading || (isDbReady && allEntries === undefined)
 
   if (isLoading) {
     return (
@@ -177,8 +173,8 @@ interface ListProgressRowProps {
 
 function ListProgressRow({ list, fandomId }: ListProgressRowProps) {
   const listId = createListId(fandomId, list.id)
-  const totalEntries = countEntries(list.structure)
-  const { stats, isLoading } = useListProgress(listId, { totalEntries })
+  const entryIds = flattenEntries(list.structure)
+  const { stats, isLoading } = useListProgress(listId, { entryIds, fandomId })
 
   if (isLoading) {
     return (
@@ -189,7 +185,7 @@ function ListProgressRow({ list, fandomId }: ListProgressRowProps) {
     )
   }
 
-  const { progressPercent, completedCount } = stats
+  const { progressPercent, completedCount, totalEntries } = stats
 
   return (
     <a href={`/fandom/${fandomId}/list/${list.id}`} className="group block">

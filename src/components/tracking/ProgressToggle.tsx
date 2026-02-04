@@ -3,21 +3,21 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { cn } from '@/lib/utils'
 
 interface ProgressToggleProps {
-  listId: string
   entryId: string
+  fandomId: string
   className?: string
 }
 
 /**
  * Interactive checkbox for marking entries as complete
- * Uses client:visible hydration for optimal performance
+ * Entry status is global - shared across all lists
  */
 export default function ProgressToggle({
-  listId,
   entryId,
+  fandomId,
   className,
 }: ProgressToggleProps) {
-  const { status, toggle, isLoading } = useEntryStatus(listId, entryId)
+  const { status, toggle, isLoading } = useEntryStatus(entryId, fandomId)
 
   const isCompleted = status === 'completed'
   const isInProgress = status === 'in-progress'

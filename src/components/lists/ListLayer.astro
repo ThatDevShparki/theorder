@@ -6,11 +6,11 @@ import type { Layer, EntryData } from '@/lib/content-utils'
 interface Props {
   layer: Layer
   entryMap: Map<string, EntryData>
-  listId: string
+  fandomId: string
   depth?: number
 }
 
-const { layer, entryMap, listId, depth = 0 } = Astro.props
+const { layer, entryMap, fandomId, depth = 0 } = Astro.props
 
 // Depth-based styling
 const depthStyles = [
@@ -67,8 +67,8 @@ const borderStyle = layer.title ? depthStyles[depth % depthStyles.length] : ''
               <ProgressToggle
                 slot="checkbox"
                 client:visible
-                listId={listId}
                 entryId={entry.id}
+                fandomId={fandomId}
               />
             </EntryCard>
           )
@@ -83,7 +83,7 @@ const borderStyle = layer.title ? depthStyles[depth % depthStyles.length] : ''
         <Astro.self
           layer={child}
           entryMap={entryMap}
-          listId={listId}
+          fandomId={fandomId}
           depth={depth + 1}
         />
       ))

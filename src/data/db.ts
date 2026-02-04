@@ -1,5 +1,5 @@
 import Dexie, { type Table } from 'dexie'
-import type { ListProgress, FandomInterest } from './schemas'
+import type { ListProgress, FandomInterest, EntryCompletion } from './schemas'
 
 /**
  * Database status indicating storage mode
@@ -14,16 +14,23 @@ export type DbStatus =
  * The Order database schema
  *
  * Version history:
- *   1 - Initial schema: progress, interests
+ *   1 - Initial schema: progress (list-based), interests
+ *   2 - Global entry completion: entries table, simplified progress
  */
 export class TheOrderDB extends Dexie {
+  // Global entry completion status (shared across lists)
+  entries!: Table<EntryCompletion, string>
+  // List-level metadata (when started, completed)
   progress!: Table<ListProgress, string>
+  // User's fandom interests/favorites
   interests!: Table<FandomInterest, string>
 
   constructor(options?: { indexedDB?: IDBFactory }) {
     super('theorder', options)
 
-    this.version(1).stores({
+    this.version(2).stores({
+      // entryId is primary key, fandomId for querying by fandom
+      entries: 'entryId, fandomId',
       // listId is primary key
       progress: 'listId',
       // fandomId is primary key, priority for sorting
@@ -61,7 +68,7 @@ export async function initDatabase(): Promise<DbStatus> {
 
     // Test write/read to verify functionality
     const testKey = '__connection_test__'
-    await db.progress.put({ listId: testKey, entries: [] })
+    await db.progress.put({ listId: testKey })
     await db.progress.delete(testKey)
 
     // Check quota to detect private browsing

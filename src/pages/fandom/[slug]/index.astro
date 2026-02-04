@@ -5,7 +5,7 @@ import Header from '@/components/navigation/Header.astro'
 import DbStatusBanner from '@/components/status/DbStatusBanner'
 import ListCard from '@/components/cards/ListCard.astro'
 import ListProgressBar from '@/components/tracking/ListProgressBar'
-import { countEntries, createListId } from '@/lib/content-utils'
+import { flattenEntries, createListId } from '@/lib/content-utils'
 
 export async function getStaticPaths() {
   const fandoms = await getCollection('fandoms')
@@ -90,7 +90,7 @@ const fandomEntries = allEntries.filter((e) => e.id.startsWith(fandomId + '/'))
           <div class="space-y-4">
             {fandomLists.map((list) => {
               const listId = createListId(fandomId, list.data.id)
-              const totalEntries = countEntries(list.data.structure)
+              const entryIds = flattenEntries(list.data.structure)
 
               return (
                 <ListCard
@@ -105,7 +105,8 @@ const fandomEntries = allEntries.filter((e) => e.id.startsWith(fandomId + '/'))
                   <ListProgressBar
                     client:visible
                     listId={listId}
-                    totalEntries={totalEntries}
+                    entryIds={entryIds}
+                    fandomId={fandomId}
                   />
                 </ListCard>
               )

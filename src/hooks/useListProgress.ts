@@ -1,23 +1,24 @@
 import { useLiveQuery } from 'dexie-react-hooks'
-import { useCallback, useMemo, useState, useEffect } from 'react'
+import { useCallback, useState, useEffect } from 'react'
 import { getDbStatus, initDatabase } from '@/data/db'
 import {
-  getListProgress,
+  getEntriesCompletion,
   setEntryStatus as setEntryStatusQuery,
+  getEntryCompletion,
   computeListStats,
 } from '@/data/queries'
-import type { EntryStatus, ListProgress, ListStats } from '@/data/schemas'
+import type { EntryStatus, ListStats } from '@/data/schemas'
 
 interface UseListProgressOptions {
-  /** Total number of entries in the list (from content) */
-  totalEntries: number
+  /** Entry IDs in this list */
+  entryIds: string[]
+  /** Fandom ID for this list */
+  fandomId: string
   /** Map of entry ID to runtime in minutes (optional, for time stats) */
   entryRuntimes?: Map<string, number>
 }
 
 interface UseListProgressReturn {
-  /** The progress data for this list */
-  progress: ListProgress | undefined
   /** Computed statistics */
   stats: ListStats
   /** Whether the data is still loading */
@@ -28,19 +29,35 @@ interface UseListProgressReturn {
   toggleEntry: (entryId: string) => Promise<void>
   /** Get the status of a specific entry */
   getEntryStatus: (entryId: string) => EntryStatus
+  /** Map of entry completions */
+  completions: Map<string, EntryStatus>
+}
+
+const defaultStats: ListStats = {
+  totalEntries: 0,
+  completedCount: 0,
+  inProgressCount: 0,
+  notStartedCount: 0,
+  progressPercent: 0,
+  timeInvested: 0,
+  timeRemaining: 0,
+  speed: null,
+  projectedDaysRemaining: null,
+  currentStreak: 0,
 }
 
 /**
  * Hook for tracking progress on a specific list
+ * Uses global entry completion status
  *
- * @param listId - Composite list ID (e.g., "star-wars/chronological")
- * @param options - Configuration including total entries count
+ * @param listId - Composite list ID (e.g., "star-wars/chronological") - used for caching
+ * @param options - Configuration including entry IDs
  */
 export function useListProgress(
-  listId: string,
+  _listId: string,
   options: UseListProgressOptions
 ): UseListProgressReturn {
-  const { totalEntries, entryRuntimes } = options
+  const { entryIds, fandomId, entryRuntimes } = options
 
   // Track database availability reactively
   const [isDbReady, setIsDbReady] = useState(() => {
@@ -58,20 +75,34 @@ export function useListProgress(
     }
   }, [])
 
-  // Live query for progress data
-  const progress = useLiveQuery(
+  // Live query for stats (recomputes when any entry changes)
+  const result = useLiveQuery(
     async () => {
-      if (!isDbReady) return undefined
-      return getListProgress(listId)
-    },
-    [listId, isDbReady],
-    undefined
-  )
+      if (!isDbReady || entryIds.length === 0) {
+        return {
+          stats: { ...defaultStats, totalEntries: entryIds.length },
+          completions: new Map(),
+        }
+      }
 
-  // Compute stats from progress
-  const stats = useMemo(
-    () => computeListStats(progress, totalEntries, entryRuntimes),
-    [progress, totalEntries, entryRuntimes]
+      const [stats, completionsMap] = await Promise.all([
+        computeListStats(entryIds, entryRuntimes),
+        getEntriesCompletion(entryIds),
+      ])
+
+      // Convert to status map
+      const completions = new Map<string, EntryStatus>()
+      completionsMap.forEach((completion, entryId) => {
+        completions.set(entryId, completion.status)
+      })
+
+      return { stats, completions }
+    },
+    [entryIds, isDbReady, entryRuntimes],
+    {
+      stats: { ...defaultStats, totalEntries: entryIds.length },
+      completions: new Map<string, EntryStatus>(),
+    }
   )
 
   // Set entry status - ensures db is initialized before writing
@@ -79,9 +110,9 @@ export function useListProgress(
     async (entryId: string, status: EntryStatus) => {
       const dbStatus = await initDatabase()
       if (dbStatus.mode === 'unavailable') return
-      await setEntryStatusQuery(listId, entryId, status)
+      await setEntryStatusQuery(entryId, fandomId, status)
     },
-    [listId]
+    [fandomId]
   )
 
   // Toggle entry between not-started and completed
@@ -90,32 +121,30 @@ export function useListProgress(
       const dbStatus = await initDatabase()
       if (dbStatus.mode === 'unavailable') return
 
-      const currentProgress = await getListProgress(listId)
-      const entry = currentProgress?.entries.find((e) => e.entryId === entryId)
-      const currentStatus = entry?.status ?? 'not-started'
+      const current = await getEntryCompletion(entryId)
+      const currentStatus = current?.status ?? 'not-started'
 
       const newStatus: EntryStatus =
         currentStatus === 'completed' ? 'not-started' : 'completed'
-      await setEntryStatusQuery(listId, entryId, newStatus)
+      await setEntryStatusQuery(entryId, fandomId, newStatus)
     },
-    [listId]
+    [fandomId]
   )
 
-  // Get entry status from current progress
+  // Get entry status from current completions
   const getEntryStatus = useCallback(
     (entryId: string): EntryStatus => {
-      const entry = progress?.entries.find((e) => e.entryId === entryId)
-      return entry?.status ?? 'not-started'
+      return result.completions.get(entryId) ?? 'not-started'
     },
-    [progress]
+    [result.completions]
   )
 
   return {
-    progress,
-    stats,
-    isLoading: progress === undefined && isDbReady,
+    stats: result.stats,
+    isLoading: isDbReady && result === undefined,
     setEntryStatus,
     toggleEntry,
     getEntryStatus,
+    completions: result.completions,
   }
 }

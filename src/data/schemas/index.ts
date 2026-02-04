@@ -1,8 +1,9 @@
 export {
   EntryStatusSchema,
-  EntryProgressSchema,
+  EntryCompletionSchema,
   ListProgressSchema,
   type EntryStatus,
+  type EntryCompletion,
   type EntryProgress,
   type ListProgress,
   type ListStats,

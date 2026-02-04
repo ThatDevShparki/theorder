@@ -4,7 +4,8 @@ import { cn } from '@/lib/utils'
 
 interface ListProgressBarProps {
   listId: string
-  totalEntries: number
+  entryIds: string[]
+  fandomId: string
   showDetails?: boolean
   className?: string
 }
@@ -14,11 +15,12 @@ interface ListProgressBarProps {
  */
 export default function ListProgressBar({
   listId,
-  totalEntries,
+  entryIds,
+  fandomId,
   showDetails = true,
   className,
 }: ListProgressBarProps) {
-  const { stats, isLoading } = useListProgress(listId, { totalEntries })
+  const { stats, isLoading } = useListProgress(listId, { entryIds, fandomId })
 
   if (isLoading) {
     return (
@@ -29,7 +31,7 @@ export default function ListProgressBar({
     )
   }
 
-  const { progressPercent, completedCount } = stats
+  const { progressPercent, completedCount, totalEntries } = stats
 
   return (
     <div className={cn('space-y-2', className)}>

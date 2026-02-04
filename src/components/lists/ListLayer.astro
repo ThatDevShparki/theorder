@@ -12,59 +12,76 @@ interface Props {
 
 const { layer, entryMap, fandomId, depth = 0 } = Astro.props
 
-// Depth-based accent colors for Ship's Computer aesthetic
-const depthAccents = [
-  'border-[var(--magenta)]/40',
-  'border-[var(--cyan)]/40',
-  'border-[var(--purple)]/40',
-  'border-[var(--gold)]/40',
+// Depth-based styling - no indentation, use color/size to show hierarchy
+const depthConfig = [
+  {
+    label: 'SECTION',
+    color: 'var(--magenta)',
+    titleSize: 'text-xl',
+    bgOpacity: 'bg-[var(--magenta)]/5',
+    borderColor: 'border-[var(--magenta)]/30',
+  },
+  {
+    label: 'ARC',
+    color: 'var(--cyan)',
+    titleSize: 'text-lg',
+    bgOpacity: 'bg-[var(--cyan)]/5',
+    borderColor: 'border-[var(--cyan)]/30',
+  },
+  {
+    label: 'PHASE',
+    color: 'var(--purple)',
+    titleSize: 'text-base',
+    bgOpacity: 'bg-[var(--purple)]/5',
+    borderColor: 'border-[var(--purple)]/30',
+  },
+  {
+    label: 'PART',
+    color: 'var(--gold)',
+    titleSize: 'text-base',
+    bgOpacity: 'bg-[var(--gold)]/5',
+    borderColor: 'border-[var(--gold)]/30',
+  },
 ]
 
-const depthTextColors = [
-  'text-[var(--magenta)]',
-  'text-[var(--cyan)]',
-  'text-[var(--purple)]',
-  'text-[var(--gold)]',
-]
-
-const borderStyle = layer.title
-  ? `border-l-2 ${depthAccents[depth % depthAccents.length]}`
-  : ''
-const accentColor = depthTextColors[depth % depthTextColors.length]
+const config = depthConfig[depth % depthConfig.length]
 ---
 
-<div class:list={['space-y-3', { 'pl-4': depth > 0 }]}>
+<div class="space-y-4">
   {
     layer.title && (
-      <div class:list={['py-3 pl-4', borderStyle]}>
-        <div class="flex items-center gap-3">
+      <div
+        class:list={[
+          'rounded-lg border p-4',
+          config.bgOpacity,
+          config.borderColor,
+        ]}
+      >
+        {/* Header row with label and line */}
+        <div class="mb-2 flex items-center gap-3">
           <span
-            class:list={[
-              'font-mono text-[10px] tracking-widest opacity-60',
-              accentColor,
-            ]}
+            class="rounded px-2 py-0.5 font-mono text-[10px] tracking-widest"
+            style={`background: ${config.color}20; color: ${config.color};`}
           >
-            {depth === 0 ? 'SECTION' : depth === 1 ? 'ARC' : 'PHASE'}
+            {config.label}
           </span>
           <div
-            class:list={[
-              'h-px flex-1 opacity-20',
-              depth === 0
-                ? 'bg-[var(--magenta)]'
-                : depth === 1
-                  ? 'bg-[var(--cyan)]'
-                  : 'bg-[var(--purple)]',
-            ]}
+            class="h-px flex-1"
+            style={`background: linear-gradient(to right, ${config.color}40, transparent);`}
           />
         </div>
+
+        {/* Title */}
         <h3
           class:list={[
-            'mt-1 font-serif font-bold tracking-wider uppercase',
-            depth === 0 ? 'text-xl' : depth === 1 ? 'text-lg' : 'text-base',
+            'font-serif font-bold tracking-wider uppercase',
+            config.titleSize,
           ]}
         >
           {layer.title}
         </h3>
+
+        {/* Description */}
         {layer.description && (
           <p class="mt-2 text-sm text-[var(--muted-foreground)]">
             {layer.description}
@@ -76,15 +93,17 @@ const accentColor = depthTextColors[depth % depthTextColors.length]
 
   {
     layer.entries && layer.entries.length > 0 && (
-      <div class="space-y-2">
+      <div class="flex flex-col gap-4">
         {layer.entries.map((entryId) => {
           const entry = entryMap.get(entryId)
           if (!entry) {
             console.warn(`Entry not found: ${entryId}`)
             return (
-              <div class="bg-destructive/10 border-destructive/30 rounded-lg border p-3 text-sm">
-                <span class="text-destructive font-medium">Missing entry:</span>
-                <code class="text-muted-foreground ml-2 font-mono text-xs">
+              <div class="rounded-lg border border-[var(--destructive)]/30 bg-[var(--destructive)]/10 p-3 text-sm">
+                <span class="font-medium text-[var(--destructive)]">
+                  Missing entry:
+                </span>
+                <code class="ml-2 font-mono text-xs text-[var(--muted-foreground)]">
                   {entryId}
                 </code>
               </div>

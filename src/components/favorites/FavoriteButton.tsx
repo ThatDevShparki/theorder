@@ -33,7 +33,7 @@ const FavoriteButton = memo(function FavoriteButton({
     [toggle]
   )
 
-  const label = isFavorite ? 'Remove from favorites' : 'Add to favorites'
+  const label = isFavorite ? 'Unfavorite' : 'Favorite'
 
   if (variant === 'icon') {
     return (
@@ -66,7 +66,7 @@ const FavoriteButton = memo(function FavoriteButton({
       )}
     >
       <span>{isFavorite ? '★' : '☆'}</span>
-      <span>{isFavorite ? 'Favorited' : 'Add to Favorites'}</span>
+      <span>{isFavorite ? 'Favorited' : 'Favorite'}</span>
     </Button>
   )
 })

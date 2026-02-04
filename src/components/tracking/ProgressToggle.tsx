@@ -35,7 +35,7 @@ const ProgressToggle = memo(function ProgressToggle({
         !isCompleted && !isInProgress && 'border-muted-foreground/50',
         className
       )}
-      aria-label={`Mark as ${isCompleted ? 'not started' : 'completed'}`}
+      aria-label={`Mark as ${isCompleted ? 'incomplete' : 'complete'}`}
     />
   )
 })

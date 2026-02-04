@@ -112,7 +112,7 @@ function getLinkTypeLabel(type?: string): string {
     case 'library':
       return 'Library'
     default:
-      return 'Watch'
+      return 'Link'
   }
 }
 
@@ -284,7 +284,7 @@ export const ExpandableEntryCard = memo(function ExpandableEntryCard({
             {links && links.length > 0 && (
               <div className="space-y-2">
                 <h5 className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
-                  Where to Watch
+                  Where to Access
                 </h5>
                 <div className="flex flex-wrap gap-2">
                   {links.map((link) => (

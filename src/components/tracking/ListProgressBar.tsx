@@ -77,7 +77,7 @@ const ListProgressBar = memo(function ListProgressBar({
               progressPercent === 0 && 'text-[var(--muted-foreground)]'
             )}
           >
-            {isComplete ? '✓ COMPLETE' : `${progressPercent}%`}
+            {isComplete ? '✓ Complete' : `${progressPercent}%`}
           </span>
         </div>
       )}

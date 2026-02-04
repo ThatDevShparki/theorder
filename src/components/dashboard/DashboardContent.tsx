@@ -153,20 +153,21 @@ export default function DashboardContent({
         <div className="absolute right-3 bottom-3 size-4 border-r-2 border-b-2 border-[var(--cyan)]/30" />
 
         <p className="mb-3 font-mono text-xs tracking-widest text-[var(--cyan)]/60">
-          NO ACTIVE MISSIONS
+          GETTING STARTED
         </p>
         <h3 className="font-serif text-xl font-bold tracking-wider uppercase">
-          No Archives Tracked
+          No Fandoms Yet
         </h3>
         <p className="mx-auto mt-3 max-w-sm font-mono text-sm text-[var(--muted-foreground)]">
-          Initialize tracking by selecting archives from the main directory.
+          Start tracking your progress by browsing fandoms and marking entries
+          as complete.
         </p>
         <a
           href="/"
           className="glow-cyan mt-6 inline-flex items-center gap-2 rounded border border-[var(--cyan)]/50 bg-[var(--cyan)]/10 px-6 py-2.5 font-mono text-sm tracking-wider text-[var(--cyan)] transition-all hover:border-[var(--cyan)] hover:bg-[var(--cyan)]/20"
         >
           <span>→</span>
-          <span>BROWSE ARCHIVES</span>
+          <span>BROWSE FANDOMS</span>
         </a>
       </div>
     )
@@ -221,7 +222,7 @@ const FandomProgress = memo(function FandomProgress({
       <div className="flex items-center justify-between border-b border-[var(--cyan)]/10 px-5 py-3">
         <div className="flex items-center gap-3">
           <span className="font-mono text-[10px] tracking-widest text-[var(--cyan)]/60">
-            MISSION.{String(index + 1).padStart(2, '0')}
+            FANDOM.{String(index + 1).padStart(2, '0')}
           </span>
           <span className="text-[var(--cyan)]/30">│</span>
           <span className="font-mono text-[10px] tracking-widest text-[var(--muted-foreground)]">
@@ -231,9 +232,9 @@ const FandomProgress = memo(function FandomProgress({
         {isFavorite && (
           <span
             className="font-mono text-[10px] tracking-widest text-[var(--warning)]"
-            title="Priority Mission"
+            title="Favorited"
           >
-            ★ PRIORITY
+            ★ FAVORITE
           </span>
         )}
       </div>
@@ -365,7 +366,7 @@ const ListProgressRow = memo(function ListProgressRow({
         {/* Status indicator */}
         <div className="mt-2 flex items-center justify-between">
           <span className="font-mono text-[10px] tracking-widest text-[var(--muted-foreground)]">
-            {isComplete ? 'COMPLETE' : 'IN PROGRESS'}
+            {isComplete ? 'Complete' : 'In progress'}
           </span>
           <span
             className={`font-mono text-[10px] font-bold tracking-wider ${
@@ -421,7 +422,7 @@ const WatchNextCard = memo(function WatchNextCard({
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
           <span className="font-mono text-[10px] tracking-widest text-[var(--magenta)]">
-            ▶ NEXT
+            Up next
           </span>
           {episodeInfo && (
             <span className="font-mono text-[10px] text-[var(--muted-foreground)]">

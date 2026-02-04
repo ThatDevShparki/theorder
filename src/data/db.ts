@@ -66,7 +66,7 @@ export async function initDatabase(): Promise<DbStatus> {
   if (typeof indexedDB === 'undefined') {
     dbStatus = {
       mode: 'unavailable',
-      reason: 'Your browser does not support IndexedDB.',
+      reason: 'Storage unavailable. Your progress will not be saved.',
     }
     return dbStatus
   }
@@ -98,7 +98,7 @@ export async function initDatabase(): Promise<DbStatus> {
         mode: 'ephemeral',
         db,
         reason:
-          'Private browsing detected. Progress saves until you close the browser.',
+          'Private browsing mode — progress saves until you close the browser.',
       }
     } else {
       dbStatus = { mode: 'persistent', db }
@@ -119,14 +119,14 @@ export async function initDatabase(): Promise<DbStatus> {
         mode: 'memory',
         db: memoryDb,
         reason:
-          'Using temporary storage. Progress saves until you close this tab.',
+          'Limited storage mode — progress saves until you close this tab.',
       }
       return dbStatus
     } catch (fallbackError) {
       console.error('In-memory fallback failed:', fallbackError)
       dbStatus = {
         mode: 'unavailable',
-        reason: 'Cannot access storage. Try a different browser.',
+        reason: 'Storage unavailable. Your progress will not be saved.',
       }
       return dbStatus
     }

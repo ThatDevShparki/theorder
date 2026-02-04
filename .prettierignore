@@ -1,0 +1,15 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+.astro/
+
+# Lock files
+pnpm-lock.yaml
+
+# Generated files
+.claude/
+
+# MCP config
+.mcp.json

@@ -172,14 +172,10 @@ fandomEntries.forEach((entry) => {
       </div>
 
       {/* List Content */}
-      <section class="space-y-8">
+      <section class="space-y-12">
         {
-          list.data.structure.map((layer) => (
-            <ListLayer
-              layer={layer}
-              entryMap={entryMap}
-              fandomId={fandomSlug}
-            />
+          list.data.structure.map((saga) => (
+            <ListLayer layer={saga} entryMap={entryMap} fandomId={fandomSlug} />
           ))
         }
       </section>

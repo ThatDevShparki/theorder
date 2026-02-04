@@ -22,11 +22,12 @@ const sagaConfig = {
 }
 ---
 
-<div class="space-y-6">
+{/* Saga wrapper - contains header + all arcs/entries */}
+<div>
   {
     /* Saga (depth 0) - Full boxed design */
     depth === 0 && layer.title && (
-      <div class="rounded-lg border border-[var(--magenta)]/30 bg-[var(--magenta)]/5 p-4">
+      <div class="mb-6 rounded-lg border border-[var(--magenta)]/30 bg-[var(--magenta)]/5 p-4">
         {/* Header row with label and line */}
         <div class="mb-2 flex items-center gap-3">
           <span
@@ -64,7 +65,7 @@ const sagaConfig = {
   {
     /* Arc (depth 1+) - Simple heading only */
     depth > 0 && layer.title && (
-      <div class="mt-6 mb-3">
+      <div class="mb-3">
         <div class="flex items-center gap-3">
           <h4 class="font-mono text-sm font-medium tracking-wider text-[var(--cyan)] uppercase">
             {layer.title}
@@ -80,9 +81,10 @@ const sagaConfig = {
     )
   }
 
+  {/* Entries - tighter spacing within groups */}
   {
     layer.entries && layer.entries.length > 0 && (
-      <div class="flex flex-col gap-4">
+      <div class="flex flex-col gap-3">
         {layer.entries.map((entryId) => {
           const entry = entryMap.get(entryId)
           if (!entry) {
@@ -128,16 +130,19 @@ const sagaConfig = {
     )
   }
 
+  {/* Arcs within saga - moderate spacing between arcs */}
   {
-    isSaga(layer) &&
-      layer.children &&
-      layer.children.map((child) => (
-        <Astro.self
-          layer={child}
-          entryMap={entryMap}
-          fandomId={fandomId}
-          depth={depth + 1}
-        />
-      ))
+    isSaga(layer) && layer.children && layer.children.length > 0 && (
+      <div class="space-y-8">
+        {layer.children.map((child) => (
+          <Astro.self
+            layer={child}
+            entryMap={entryMap}
+            fandomId={fandomId}
+            depth={depth + 1}
+          />
+        ))}
+      </div>
+    )
   }
 </div>

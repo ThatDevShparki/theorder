@@ -20,41 +20,110 @@ const fandoms = fandomsCollection.map((f) => ({
   <DbStatusBanner client:load />
   <Header currentPath="/" />
 
-  <main class="mx-auto max-w-6xl px-4 py-8">
-    <header class="mb-8 text-center">
-      <h1 class="font-serif text-4xl font-semibold tracking-wider md:text-5xl">
-        The Order
-      </h1>
-      <p class="text-muted-foreground mt-3 text-lg">
-        Track your journey through your favorite fandoms
-      </p>
+  <main class="relative min-h-screen">
+    {/* Background grid pattern */}
+    <div
+      class="grid-pattern pointer-events-none absolute inset-0 opacity-50"
+      aria-hidden="true"
+    >
+    </div>
+
+    {/* Hero section */}
+    <header class="relative py-16 text-center md:py-24">
+      {/* Decorative elements */}
+      <div
+        class="absolute top-8 left-1/2 h-px w-48 -translate-x-1/2 bg-gradient-to-r from-transparent via-[var(--cyan)] to-transparent opacity-30"
+        aria-hidden="true"
+      >
+      </div>
+
+      <div class="mx-auto max-w-2xl px-4">
+        <p
+          class="text-accent mb-4 font-mono text-xs tracking-[0.3em] uppercase"
+        >
+          Canon Tracking System
+        </p>
+        <h1
+          class="font-serif text-5xl font-bold tracking-[0.15em] uppercase md:text-7xl"
+        >
+          The Order
+        </h1>
+        <div
+          class="mx-auto mt-6 h-px w-32 bg-gradient-to-r from-transparent via-[var(--magenta)] to-transparent"
+        >
+        </div>
+        <p class="text-muted-foreground mt-6 text-lg md:text-xl">
+          Navigate your journey through legendary universes.
+          <br />
+          <span class="text-accent/80">Every story. In order.</span>
+        </p>
+      </div>
+
+      <div
+        class="absolute bottom-8 left-1/2 h-px w-48 -translate-x-1/2 bg-gradient-to-r from-transparent via-[var(--cyan)] to-transparent opacity-30"
+        aria-hidden="true"
+      >
+      </div>
     </header>
 
-    {
-      fandoms.length === 0 ? (
-        <div class="bg-elevated rounded-xl p-8 text-center">
-          <h2 class="text-xl font-semibold">No fandoms yet</h2>
-          <p class="text-muted-foreground mt-2">
-            Content is coming soon. Check back later!
-          </p>
+    {/* Fandoms section */}
+    <section class="relative mx-auto max-w-6xl px-4 pb-16">
+      <div class="mb-8 flex items-center gap-4">
+        <div
+          class="h-px flex-1 bg-gradient-to-r from-[var(--cyan)]/30 to-transparent"
+        >
         </div>
-      ) : (
-        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {fandoms.map((fandom) => (
-            <FandomCard
-              id={fandom.id}
-              name={fandom.name}
-              description={fandom.description}
-            />
-          ))}
+        <h2
+          class="text-muted-foreground font-mono text-xs tracking-[0.2em] uppercase"
+        >
+          Available Archives
+        </h2>
+        <span class="text-accent font-mono text-xs">[{fandoms.length}]</span>
+        <div
+          class="h-px flex-1 bg-gradient-to-l from-[var(--cyan)]/30 to-transparent"
+        >
         </div>
-      )
-    }
+      </div>
+
+      {
+        fandoms.length === 0 ? (
+          <div class="bg-elevated corner-marks rounded-lg p-8 text-center">
+            <h2 class="font-mono text-lg font-semibold tracking-wide uppercase">
+              No Archives Available
+            </h2>
+            <p class="text-muted-foreground mt-2 font-mono text-sm">
+              System initializing. Check back later.
+            </p>
+          </div>
+        ) : (
+          <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {fandoms.map((fandom, index) => (
+              <div
+                class="animate-in fade-in slide-in-from-bottom-4"
+                style={`animation-delay: ${index * 100}ms; animation-fill-mode: both;`}
+              >
+                <FandomCard
+                  id={fandom.id}
+                  name={fandom.name}
+                  description={fandom.description}
+                />
+              </div>
+            ))}
+          </div>
+        )
+      }
+    </section>
   </main>
 
-  <footer
-    class="border-border text-muted-foreground border-t py-8 text-center text-sm"
-  >
-    <p>Track your fandom journey with The Order</p>
+  <footer class="border-border/30 relative border-t py-12">
+    <div
+      class="absolute top-0 left-1/2 h-px w-32 -translate-x-1/2 bg-gradient-to-r from-transparent via-[var(--cyan)] to-transparent opacity-40"
+    >
+    </div>
+    <div class="text-center">
+      <p class="text-muted-foreground font-mono text-xs tracking-widest">
+        THE ORDER // CANON TRACKER // v1.0
+      </p>
+    </div>
   </footer>
 </Layout>

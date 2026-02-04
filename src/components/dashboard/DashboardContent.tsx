@@ -128,9 +128,15 @@ export default function DashboardContent({
     return (
       <div className="space-y-6">
         {[1, 2].map((i) => (
-          <div key={i} className="bg-elevated rounded-xl p-6">
-            <Skeleton className="mb-4 h-6 w-48" />
-            <Skeleton className="h-2 w-full" />
+          <div
+            key={i}
+            className="bg-elevated rounded-lg border border-[var(--cyan)]/10 p-6"
+          >
+            <div className="mb-4 flex items-center gap-3">
+              <Skeleton className="h-2 w-2 rounded-full" />
+              <Skeleton className="h-5 w-48" />
+            </div>
+            <Skeleton className="h-1.5 w-full rounded-full" />
           </div>
         ))}
       </div>
@@ -139,16 +145,28 @@ export default function DashboardContent({
 
   if (activeFandoms.length === 0) {
     return (
-      <div className="bg-elevated rounded-xl p-8 text-center">
-        <h3 className="text-lg font-semibold">No fandoms tracked yet</h3>
-        <p className="text-muted-foreground mt-2">
-          Start by browsing fandoms and adding some to your journey.
+      <div className="relative rounded-lg border border-[var(--cyan)]/20 bg-[var(--background-elevated)] p-10 text-center">
+        {/* Corner marks */}
+        <div className="absolute top-3 left-3 size-4 border-t-2 border-l-2 border-[var(--cyan)]/30" />
+        <div className="absolute top-3 right-3 size-4 border-t-2 border-r-2 border-[var(--cyan)]/30" />
+        <div className="absolute bottom-3 left-3 size-4 border-b-2 border-l-2 border-[var(--cyan)]/30" />
+        <div className="absolute right-3 bottom-3 size-4 border-r-2 border-b-2 border-[var(--cyan)]/30" />
+
+        <p className="mb-3 font-mono text-xs tracking-widest text-[var(--cyan)]/60">
+          NO ACTIVE MISSIONS
+        </p>
+        <h3 className="font-serif text-xl font-bold tracking-wider uppercase">
+          No Archives Tracked
+        </h3>
+        <p className="mx-auto mt-3 max-w-sm font-mono text-sm text-[var(--muted-foreground)]">
+          Initialize tracking by selecting archives from the main directory.
         </p>
         <a
           href="/"
-          className="bg-primary text-primary-foreground hover:bg-primary/90 hover:glow-magenta mt-4 inline-block rounded-lg px-6 py-2 font-medium transition-colors"
+          className="glow-cyan mt-6 inline-flex items-center gap-2 rounded border border-[var(--cyan)]/50 bg-[var(--cyan)]/10 px-6 py-2.5 font-mono text-sm tracking-wider text-[var(--cyan)] transition-all hover:border-[var(--cyan)] hover:bg-[var(--cyan)]/20"
         >
-          Browse Fandoms
+          <span>→</span>
+          <span>BROWSE ARCHIVES</span>
         </a>
       </div>
     )
@@ -156,7 +174,7 @@ export default function DashboardContent({
 
   return (
     <div className="space-y-6">
-      {activeFandoms.map((fandom) => {
+      {activeFandoms.map((fandom, index) => {
         const lists = listsByFandom.get(fandom.id) || []
         const isFavorite = favoriteFandomIds.includes(fandom.id)
         return (
@@ -167,6 +185,7 @@ export default function DashboardContent({
             isFavorite={isFavorite}
             favoriteListIds={favoriteListIdSet}
             allEntries={allEntries}
+            index={index}
           />
         )
       })}
@@ -180,6 +199,7 @@ interface FandomProgressProps {
   isFavorite: boolean
   favoriteListIds: Set<string>
   allEntries: Record<string, EntryDisplayData>
+  index: number
 }
 
 const FandomProgress = memo(function FandomProgress({
@@ -188,45 +208,68 @@ const FandomProgress = memo(function FandomProgress({
   isFavorite,
   favoriteListIds,
   allEntries,
+  index,
 }: FandomProgressProps) {
+  const archiveCode = fandom.id.toUpperCase().slice(0, 3)
+
   return (
-    <div className="bg-elevated rounded-xl p-6">
-      <a
-        href={`/fandom/${fandom.id}`}
-        className="group flex items-center justify-between"
-      >
-        <div className="flex min-w-0 flex-1 items-center gap-2">
-          {isFavorite && (
-            <span className="text-warning shrink-0" title="Favorited">
-              ★
-            </span>
-          )}
-          <h3 className="group-hover:text-primary truncate font-serif text-xl font-semibold tracking-wide">
+    <div className="group/card relative rounded-lg border border-[var(--cyan)]/10 bg-[var(--background-elevated)] transition-all hover:border-[var(--cyan)]/30">
+      {/* Top accent line */}
+      <div className="h-0.5 rounded-t-lg bg-gradient-to-r from-transparent via-[var(--cyan)]/0 to-transparent transition-all group-hover/card:via-[var(--cyan)]/60" />
+
+      {/* Header */}
+      <div className="flex items-center justify-between border-b border-[var(--cyan)]/10 px-5 py-3">
+        <div className="flex items-center gap-3">
+          <span className="font-mono text-[10px] tracking-widest text-[var(--cyan)]/60">
+            MISSION.{String(index + 1).padStart(2, '0')}
+          </span>
+          <span className="text-[var(--cyan)]/30">│</span>
+          <span className="font-mono text-[10px] tracking-widest text-[var(--muted-foreground)]">
+            {archiveCode}
+          </span>
+        </div>
+        {isFavorite && (
+          <span
+            className="font-mono text-[10px] tracking-widest text-[var(--warning)]"
+            title="Priority Mission"
+          >
+            ★ PRIORITY
+          </span>
+        )}
+      </div>
+
+      {/* Main content */}
+      <div className="p-5">
+        <a
+          href={`/fandom/${fandom.id}`}
+          className="group flex items-center justify-between"
+        >
+          <h3 className="truncate font-serif text-xl font-bold tracking-wider uppercase transition-colors group-hover:text-[var(--accent)]">
             {fandom.name}
           </h3>
-        </div>
-        <span className="text-muted-foreground group-hover:text-foreground text-sm">
-          View →
-        </span>
-      </a>
+          <span className="flex items-center gap-2 font-mono text-xs tracking-wider text-[var(--muted-foreground)] transition-colors group-hover:text-[var(--accent)]">
+            ACCESS <span className="text-[var(--accent)]">→</span>
+          </span>
+        </a>
 
-      {lists.length > 0 && (
-        <div className="mt-4 space-y-4">
-          {lists.map((list) => {
-            const listId = createListId(fandom.id, list.id)
-            const isListFavorite = favoriteListIds.has(listId)
-            return (
-              <ListProgressRow
-                key={list.id}
-                list={list}
-                fandomId={fandom.id}
-                isFavorite={isListFavorite}
-                allEntries={allEntries}
-              />
-            )
-          })}
-        </div>
-      )}
+        {lists.length > 0 && (
+          <div className="mt-5 space-y-4">
+            {lists.map((list) => {
+              const listId = createListId(fandom.id, list.id)
+              const isListFavorite = favoriteListIds.has(listId)
+              return (
+                <ListProgressRow
+                  key={list.id}
+                  list={list}
+                  fandomId={fandom.id}
+                  isFavorite={isListFavorite}
+                  allEntries={allEntries}
+                />
+              )
+            })}
+          </div>
+        )}
+      </div>
     </div>
   )
 })
@@ -269,12 +312,12 @@ const ListProgressRow = memo(function ListProgressRow({
 
   if (isLoading) {
     return (
-      <div className="space-y-2">
+      <div className="space-y-2 rounded border border-[var(--cyan)]/5 bg-[var(--background)]/50 p-3">
         <div className="flex items-center justify-between">
-          <Skeleton className="h-4 w-32" />
-          <Skeleton className="h-4 w-16" />
+          <Skeleton className="h-3 w-32" />
+          <Skeleton className="h-3 w-16" />
         </div>
-        <Skeleton className="h-1.5 w-full" />
+        <Skeleton className="h-1 w-full" />
       </div>
     )
   }
@@ -283,22 +326,56 @@ const ListProgressRow = memo(function ListProgressRow({
   const isComplete = completedCount === totalEntries
 
   return (
-    <div className="space-y-2">
-      <a href={`/fandom/${fandomId}/list/${list.id}`} className="group block">
-        <div className="flex items-center justify-between text-sm">
-          <span className="text-muted-foreground group-hover:text-foreground flex items-center gap-1">
-            {isFavorite && <span className="text-warning text-xs">★</span>}
+    <div className="space-y-3">
+      <a
+        href={`/fandom/${fandomId}/list/${list.id}`}
+        className="group block rounded border border-[var(--cyan)]/5 bg-[var(--background)]/50 p-3 transition-all hover:border-[var(--cyan)]/20 hover:bg-[var(--background)]"
+      >
+        <div className="mb-2 flex items-center justify-between">
+          <span className="flex items-center gap-2 font-mono text-sm tracking-wide text-[var(--muted-foreground)] transition-colors group-hover:text-[var(--foreground)]">
+            {isFavorite && (
+              <span className="text-[10px] text-[var(--warning)]">★</span>
+            )}
             {list.title}
           </span>
-          <span className="text-primary font-mono">
+          <span className="font-mono text-xs tracking-wider text-[var(--accent)]">
             {completedCount}/{totalEntries}
           </span>
         </div>
-        <div className="bg-muted mt-1 h-1.5 overflow-hidden rounded-full">
+
+        {/* Progress bar with glow effect */}
+        <div className="relative h-1 overflow-hidden rounded-full bg-[var(--muted)]">
           <div
-            className="h-full rounded-full bg-gradient-to-r from-[var(--purple)] to-[var(--magenta)] transition-all duration-500"
+            className={`h-full rounded-full transition-all duration-500 ${
+              isComplete
+                ? 'bg-[var(--warning)] shadow-[0_0_10px_var(--warning)]'
+                : 'bg-gradient-to-r from-[var(--purple)] to-[var(--magenta)]'
+            }`}
             style={{ width: `${progressPercent}%` }}
           />
+          {/* Animated scan line for in-progress */}
+          {!isComplete && progressPercent > 0 && (
+            <div
+              className="absolute top-0 h-full w-1 animate-pulse bg-white/30"
+              style={{ left: `${progressPercent}%` }}
+            />
+          )}
+        </div>
+
+        {/* Status indicator */}
+        <div className="mt-2 flex items-center justify-between">
+          <span className="font-mono text-[10px] tracking-widest text-[var(--muted-foreground)]">
+            {isComplete ? 'COMPLETE' : 'IN PROGRESS'}
+          </span>
+          <span
+            className={`font-mono text-[10px] font-bold tracking-wider ${
+              isComplete
+                ? 'text-[var(--warning)]'
+                : 'text-[var(--muted-foreground)]'
+            }`}
+          >
+            {progressPercent}%
+          </span>
         </div>
       </a>
 
@@ -329,26 +406,43 @@ const WatchNextCard = memo(function WatchNextCard({
   return (
     <a
       href={`/fandom/${fandomId}/list/${listId}`}
-      className="border-border/50 bg-background/50 hover:bg-background group hover:border-accent/50 flex items-center gap-3 rounded-lg border p-3 transition-colors"
+      className="group relative flex items-center gap-4 overflow-hidden rounded border border-[var(--magenta)]/20 bg-[var(--magenta)]/5 p-3 transition-all hover:border-[var(--magenta)]/40 hover:bg-[var(--magenta)]/10"
     >
-      <div className="bg-accent/20 text-accent flex size-8 shrink-0 items-center justify-center rounded-full">
-        <Play className="size-4" />
+      {/* Animated border accent */}
+      <div className="absolute top-0 left-0 h-full w-0.5 bg-gradient-to-b from-[var(--magenta)] to-[var(--purple)]" />
+
+      {/* Play icon with pulse */}
+      <div className="relative flex size-10 shrink-0 items-center justify-center rounded border border-[var(--magenta)]/30 bg-[var(--magenta)]/10">
+        <Play className="size-4 text-[var(--magenta)]" />
+        {/* Pulse ring */}
+        <div className="absolute inset-0 animate-ping rounded border border-[var(--magenta)]/20" />
       </div>
+
       <div className="min-w-0 flex-1">
-        <div className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
-          Watch Next
+        <div className="flex items-center gap-2">
+          <span className="font-mono text-[10px] tracking-widest text-[var(--magenta)]">
+            ▶ NEXT
+          </span>
+          {episodeInfo && (
+            <span className="font-mono text-[10px] text-[var(--muted-foreground)]">
+              {episodeInfo}
+            </span>
+          )}
         </div>
-        <div className="group-hover:text-accent truncate font-medium">
+        <div className="mt-0.5 truncate font-medium transition-colors group-hover:text-[var(--magenta)]">
           {entry.title}
         </div>
-        {(episodeInfo || entry.showTitle) && (
-          <div className="text-muted-foreground truncate text-sm">
-            {episodeInfo}
-            {episodeInfo && entry.showTitle && ' • '}
+        {entry.showTitle && (
+          <div className="truncate font-mono text-xs text-[var(--muted-foreground)]">
             {entry.showTitle}
           </div>
         )}
       </div>
+
+      {/* Arrow indicator */}
+      <span className="font-mono text-[var(--magenta)] opacity-50 transition-all group-hover:translate-x-1 group-hover:opacity-100">
+        →
+      </span>
     </a>
   )
 })

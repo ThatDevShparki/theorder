@@ -8,26 +8,79 @@ interface Props {
 
 const { id, name, description, href } = Astro.props
 const linkHref = href ?? `/fandom/${id}`
+const archiveCode = id.toUpperCase().slice(0, 3)
 ---
 
 <a
   href={linkHref}
-  class="group bg-elevated hover:bg-hover hover:glow-magenta block overflow-hidden rounded-xl transition-all"
+  class="group bg-elevated hover:glow-cyan relative block overflow-hidden rounded-lg border border-transparent transition-all duration-300 hover:border-[var(--cyan)]/30"
 >
-  <div class="from-chart-3/30 to-primary/30 aspect-video bg-gradient-to-br">
-    {/* Placeholder for cover image */}
+  {/* Top accent line */}
+  <div
+    class="h-0.5 bg-gradient-to-r from-transparent via-[var(--cyan)]/0 to-transparent transition-all duration-300 group-hover:via-[var(--cyan)]"
+  >
   </div>
+
+  {/* Header bar */}
+  <div
+    class="bg-background/50 flex items-center justify-between border-b border-[var(--cyan)]/10 px-4 py-2"
+  >
+    <span class="text-accent font-mono text-[10px] tracking-widest"
+      >ARCHIVE.{archiveCode}</span
+    >
+    <div class="flex items-center gap-2">
+      <span
+        class="bg-success/20 text-success size-1.5 animate-pulse rounded-full"
+      ></span>
+      <span class="text-muted-foreground font-mono text-[10px]">ACTIVE</span>
+    </div>
+  </div>
+
+  {/* Visual area */}
+  <div
+    class="relative aspect-[16/9] overflow-hidden bg-gradient-to-br from-[var(--purple)]/20 via-transparent to-[var(--cyan)]/10"
+  >
+    {/* Grid overlay */}
+    <div class="grid-pattern absolute inset-0 opacity-30"></div>
+    {/* Center icon/initial */}
+    <div
+      class="absolute inset-0 flex items-center justify-center opacity-20 transition-opacity group-hover:opacity-30"
+    >
+      <span
+        class="font-serif text-6xl font-bold tracking-widest text-[var(--cyan)]"
+        >{archiveCode}</span
+      >
+    </div>
+    {/* Corner marks */}
+    <div
+      class="absolute top-3 left-3 size-4 border-t-2 border-l-2 border-[var(--cyan)]/30"
+    >
+    </div>
+    <div
+      class="absolute top-3 right-3 size-4 border-t-2 border-r-2 border-[var(--cyan)]/30"
+    >
+    </div>
+    <div
+      class="absolute bottom-3 left-3 size-4 border-b-2 border-l-2 border-[var(--cyan)]/30"
+    >
+    </div>
+    <div
+      class="absolute right-3 bottom-3 size-4 border-r-2 border-b-2 border-[var(--cyan)]/30"
+    >
+    </div>
+  </div>
+
   <div class="p-4">
     <div class="flex items-start justify-between gap-2">
       <div class="min-w-0 flex-1">
         <h3
-          class="group-hover:text-primary truncate font-serif text-lg font-semibold tracking-wide"
+          class="group-hover:text-accent truncate font-serif text-lg font-bold tracking-wider uppercase"
         >
           {name}
         </h3>
         {
           description && (
-            <p class="text-muted-foreground mt-1 line-clamp-2 text-sm">
+            <p class="text-muted-foreground mt-2 line-clamp-2 text-sm">
               {description}
             </p>
           )
@@ -35,8 +88,25 @@ const linkHref = href ?? `/fandom/${id}`
       </div>
       <slot name="action" />
     </div>
+
+    {/* Access button */}
+    <div class="mt-4 flex items-center justify-between">
+      <span class="text-muted-foreground font-mono text-xs">→ ACCESS</span>
+      <div
+        class="border-accent/30 group-hover:border-accent group-hover:bg-accent/10 rounded border px-3 py-1 transition-all"
+      >
+        <span class="text-accent font-mono text-xs tracking-wider">ENTER</span>
+      </div>
+    </div>
+
     <div class="mt-3">
       <slot />
     </div>
+  </div>
+
+  {/* Bottom accent line */}
+  <div
+    class="h-0.5 bg-gradient-to-r from-transparent via-[var(--cyan)]/0 to-transparent transition-all duration-300 group-hover:via-[var(--magenta)]"
+  >
   </div>
 </a>

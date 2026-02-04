@@ -12,59 +12,95 @@ interface Props {
   tags?: string[]
 }
 
-const {
-  id: _id,
-  title,
-  description,
-  estimatedRuntime,
-  structure,
-  href,
-  tags,
-} = Astro.props
+const { id, title, description, estimatedRuntime, structure, href, tags } =
+  Astro.props
 
 const entryCount = countEntries(structure)
+const listCode = id.toUpperCase().slice(0, 4)
 ---
 
 <a
   href={href}
-  class="group bg-elevated hover:bg-hover hover:glow-cyan block rounded-xl p-5 transition-all"
+  class="group hover:glow-cyan relative block overflow-hidden rounded-lg border border-[var(--cyan)]/10 bg-[var(--background-elevated)] transition-all hover:border-[var(--cyan)]/30"
 >
-  <div class="flex items-start justify-between gap-3">
-    <div class="min-w-0 flex-1">
-      <h3
-        class="group-hover:text-accent truncate font-serif text-lg font-semibold tracking-wide"
+  {/* Top accent */}
+  <div
+    class="h-0.5 bg-gradient-to-r from-transparent via-[var(--cyan)]/0 to-transparent transition-all group-hover:via-[var(--cyan)]/60"
+  >
+  </div>
+
+  {/* Header bar */}
+  <div
+    class="flex items-center justify-between border-b border-[var(--cyan)]/10 px-4 py-2"
+  >
+    <span class="font-mono text-[10px] tracking-widest text-[var(--cyan)]/60"
+      >LIST.{listCode}</span
+    >
+    <div class="flex items-center gap-3 font-mono text-[10px]">
+      <span class="text-[var(--muted-foreground)]"
+        ><span class="text-[var(--accent)]">{entryCount}</span> ENTRIES</span
       >
-        {title}
-      </h3>
       {
-        description && (
-          <p class="text-muted-foreground mt-1 line-clamp-2 text-sm">
-            {description}
-          </p>
+        estimatedRuntime && (
+          <span class="text-[var(--muted-foreground)]">
+            <span class="opacity-50">•</span> {estimatedRuntime}
+          </span>
         )
       }
     </div>
-    {
-      tags && tags.length > 0 && (
-        <div class="flex flex-shrink-0 gap-1">
-          {tags.slice(0, 2).map((tag) => (
-            <span class="bg-muted text-muted-foreground rounded-full px-2 py-0.5 text-xs font-medium">
-              {tag}
-            </span>
-          ))}
-        </div>
-      )
-    }
   </div>
 
+  <div class="p-4">
+    <div class="flex items-start justify-between gap-3">
+      <div class="min-w-0 flex-1">
+        <h3
+          class="truncate font-serif text-lg font-bold tracking-wider uppercase transition-colors group-hover:text-[var(--accent)]"
+        >
+          {title}
+        </h3>
+        {
+          description && (
+            <p class="mt-2 line-clamp-2 text-sm text-[var(--muted-foreground)]">
+              {description}
+            </p>
+          )
+        }
+      </div>
+      {
+        tags && tags.length > 0 && (
+          <div class="flex flex-shrink-0 gap-1">
+            {tags.slice(0, 2).map((tag) => (
+              <span class="rounded border border-[var(--purple)]/30 bg-[var(--purple)]/10 px-2 py-0.5 font-mono text-[10px] tracking-wider text-[var(--purple)]">
+                {tag}
+              </span>
+            ))}
+          </div>
+        )
+      }
+    </div>
+
+    {/* Access indicator */}
+    <div class="mt-4 flex items-center justify-between">
+      <span class="font-mono text-xs text-[var(--muted-foreground)]"
+        >→ OPEN LIST</span
+      >
+      <div
+        class="rounded border border-[var(--cyan)]/30 px-3 py-1 transition-all group-hover:border-[var(--cyan)] group-hover:bg-[var(--cyan)]/10"
+      >
+        <span class="font-mono text-xs tracking-wider text-[var(--cyan)]"
+          >ACCESS</span
+        >
+      </div>
+    </div>
+
+    <div class="mt-4">
+      <slot />
+    </div>
+  </div>
+
+  {/* Bottom accent */}
   <div
-    class="text-muted-foreground mt-3 flex items-center gap-4 font-mono text-sm"
+    class="h-0.5 bg-gradient-to-r from-transparent via-[var(--cyan)]/0 to-transparent transition-all group-hover:via-[var(--magenta)]/60"
   >
-    <span>{entryCount} entries</span>
-    {estimatedRuntime && <span>• {estimatedRuntime}</span>}
-  </div>
-
-  <div class="mt-4">
-    <slot />
   </div>
 </a>

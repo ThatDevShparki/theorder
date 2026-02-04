@@ -47,15 +47,23 @@ function getEntryTypeLabel(type: string): string {
 
 function getEntryTypeColor(type: string): string {
   const colors: Record<string, string> = {
-    movie: 'bg-warning/20 text-warning',
-    'tv-episode': 'bg-accent/20 text-accent',
-    'tv-special': 'bg-accent/20 text-accent',
-    book: 'bg-chart-3/20 text-chart-3',
-    comic: 'bg-chart-3/20 text-chart-3',
-    short: 'bg-primary/20 text-primary',
-    game: 'bg-success/20 text-success',
+    movie:
+      'border-[var(--warning)]/40 bg-[var(--warning)]/10 text-[var(--warning)]',
+    'tv-episode':
+      'border-[var(--accent)]/40 bg-[var(--accent)]/10 text-[var(--accent)]',
+    'tv-special':
+      'border-[var(--accent)]/40 bg-[var(--accent)]/10 text-[var(--accent)]',
+    book: 'border-[var(--purple)]/40 bg-[var(--purple)]/10 text-[var(--purple)]',
+    comic:
+      'border-[var(--purple)]/40 bg-[var(--purple)]/10 text-[var(--purple)]',
+    short:
+      'border-[var(--magenta)]/40 bg-[var(--magenta)]/10 text-[var(--magenta)]',
+    game: 'border-[var(--success)]/40 bg-[var(--success)]/10 text-[var(--success)]',
   }
-  return colors[type] ?? 'bg-muted text-muted-foreground'
+  return (
+    colors[type] ??
+    'border-[var(--muted-foreground)]/30 bg-[var(--muted)]/50 text-[var(--muted-foreground)]'
+  )
 }
 
 function formatDuration(minutes: number): string {
@@ -149,39 +157,51 @@ export const ExpandableEntryCard = memo(function ExpandableEntryCard({
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
       <div
         className={cn(
-          'group bg-elevated rounded-lg transition-colors',
-          isOpen && 'bg-hover'
+          'group relative rounded-lg border border-transparent transition-all',
+          isOpen
+            ? 'border-[var(--cyan)]/20 bg-[var(--background-hover)]'
+            : 'bg-[var(--background-elevated)] hover:border-[var(--cyan)]/10'
         )}
       >
-        {/* Main card content */}
+        {/* Left accent line */}
         <div
           className={cn(
-            'flex items-start gap-4 p-4',
-            compact && 'py-3',
-            !isOpen && 'hover:bg-hover rounded-lg'
+            'absolute top-0 left-0 h-full w-0.5 rounded-l-lg transition-all',
+            isOpen
+              ? 'bg-gradient-to-b from-[var(--cyan)] to-[var(--purple)]'
+              : 'bg-transparent group-hover:bg-[var(--cyan)]/30'
           )}
+        />
+
+        {/* Main card content */}
+        <div
+          className={cn('flex items-start gap-4 p-4 pl-5', compact && 'py-3')}
         >
           {/* Checkbox slot */}
-          <div className="flex-shrink-0 pt-1">{children}</div>
+          <div className="flex-shrink-0 pt-0.5">{children}</div>
 
           {/* Content */}
           <div className="min-w-0 flex-1">
-            <div className="flex items-start justify-between gap-2">
+            <div className="flex items-start justify-between gap-3">
               <div className="min-w-0 flex-1">
                 <h4 className="truncate leading-tight font-medium">{title}</h4>
-                <div className="text-muted-foreground mt-0.5 flex flex-wrap items-center gap-2 text-sm">
+                <div className="mt-1 flex flex-wrap items-center gap-2 font-mono text-xs text-[var(--muted-foreground)]">
                   {episodeInfo && (
-                    <span className="font-mono">{episodeInfo}</span>
+                    <span className="text-[var(--accent)]">{episodeInfo}</span>
                   )}
-                  {showTitle && <span>{showTitle}</span>}
-                  <span>{year}</span>
-                  {displayRuntime && <span>• {displayRuntime}</span>}
+                  {showTitle && (
+                    <span className="max-w-[150px] truncate">{showTitle}</span>
+                  )}
+                  <span className="opacity-60">{year}</span>
+                  {displayRuntime && (
+                    <span className="opacity-60">• {displayRuntime}</span>
+                  )}
                 </div>
               </div>
               <div className="flex items-center gap-2">
                 <span
                   className={cn(
-                    'rounded-full px-2 py-0.5 text-xs font-medium',
+                    'rounded border px-2 py-0.5 font-mono text-[10px] font-medium tracking-wider uppercase',
                     typeColor
                   )}
                 >
@@ -192,7 +212,7 @@ export const ExpandableEntryCard = memo(function ExpandableEntryCard({
                     <Button
                       variant="ghost"
                       size="icon-xs"
-                      className="text-muted-foreground hover:text-foreground"
+                      className="text-[var(--muted-foreground)] hover:text-[var(--accent)]"
                       aria-expanded={isOpen}
                       aria-controls={`entry-details-${id}`}
                     >

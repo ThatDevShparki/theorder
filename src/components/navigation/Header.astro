@@ -6,32 +6,61 @@ interface Props {
 const { currentPath = '' } = Astro.props
 
 const navLinks = [
-  { href: '/', label: 'Browse' },
-  { href: '/dashboard', label: 'Dashboard' },
+  { href: '/', label: 'Browse', code: 'NAV.01' },
+  { href: '/dashboard', label: 'Dashboard', code: 'NAV.02' },
 ]
 ---
 
-<header class="border-border bg-background border-b">
-  <nav class="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-    <a href="/" class="flex items-center gap-2">
-      <span class="font-serif text-2xl font-semibold tracking-wider">
-        The Order
-      </span>
+<header
+  class="border-border/50 bg-background/95 sticky top-0 z-50 border-b backdrop-blur-sm"
+>
+  {/* Top accent line */}
+  <div
+    class="h-0.5 bg-gradient-to-r from-transparent via-[var(--cyan)] to-transparent opacity-40"
+  >
+  </div>
+
+  <nav class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
+    <a href="/" class="group flex items-center gap-3">
+      {/* Logo mark */}
+      <div
+        class="border-accent/30 bg-accent/10 group-hover:border-accent/60 group-hover:bg-accent/20 flex size-9 items-center justify-center rounded border transition-all"
+      >
+        <span class="text-accent font-mono text-sm font-bold">TO</span>
+      </div>
+      <div class="flex flex-col">
+        <span
+          class="font-serif text-xl font-semibold tracking-[0.2em] uppercase"
+        >
+          The Order
+        </span>
+        <span
+          class="text-muted-foreground font-mono text-[10px] tracking-widest"
+          >CANON TRACKER v1.0</span
+        >
+      </div>
     </a>
 
-    <div class="flex items-center gap-6">
+    <div class="flex items-center gap-1">
       {
         navLinks.map((link) => (
           <a
             href={link.href}
             class:list={[
-              'hover:text-foreground text-sm font-medium transition-colors',
+              'group relative px-4 py-2 font-mono text-sm tracking-wide transition-all',
               currentPath === link.href
-                ? 'text-foreground'
-                : 'text-muted-foreground',
+                ? 'text-accent'
+                : 'text-muted-foreground hover:text-foreground',
             ]}
           >
+            <span class="text-accent/50 mr-2 text-xs">{link.code}</span>
             {link.label}
+            {/* Active indicator */}
+            {currentPath === link.href && (
+              <span class="bg-accent absolute bottom-0 left-1/2 h-0.5 w-8 -translate-x-1/2 rounded-full" />
+            )}
+            {/* Hover indicator */}
+            <span class="bg-accent/0 group-hover:bg-accent/30 absolute bottom-0 left-1/2 h-0.5 w-0 -translate-x-1/2 rounded-full transition-all group-hover:w-8" />
           </a>
         ))
       }

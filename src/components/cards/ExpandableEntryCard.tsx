@@ -5,7 +5,6 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible'
-import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
 export interface EntryLink {
@@ -177,60 +176,68 @@ export const ExpandableEntryCard = memo(function ExpandableEntryCard({
         <div
           className={cn('flex items-start gap-4 p-4 pl-5', compact && 'py-3')}
         >
-          {/* Checkbox slot */}
-          <div className="flex-shrink-0 pt-0.5">{children}</div>
+          {/* Checkbox slot - stops propagation to prevent triggering expand */}
+          <div
+            className="flex-shrink-0 pt-0.5"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {children}
+          </div>
 
-          {/* Content */}
-          <div className="min-w-0 flex-1">
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0 flex-1">
-                <h4 className="truncate leading-tight font-medium">{title}</h4>
-                <div className="mt-1 flex flex-wrap items-center gap-2 font-mono text-xs text-[var(--muted-foreground)]">
-                  {episodeInfo && (
-                    <span className="text-[var(--accent)]">{episodeInfo}</span>
-                  )}
-                  {showTitle && (
-                    <span className="max-w-[150px] truncate">{showTitle}</span>
-                  )}
-                  <span className="opacity-60">{year}</span>
-                  {displayRuntime && (
-                    <span className="opacity-60">• {displayRuntime}</span>
+          {/* Content - clickable to expand/collapse */}
+          <CollapsibleTrigger asChild>
+            <button
+              type="button"
+              className={cn(
+                'min-w-0 flex-1 cursor-pointer text-left',
+                hasExpandableContent && 'hover:opacity-90'
+              )}
+              aria-expanded={isOpen}
+              aria-controls={`entry-details-${id}`}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <h4 className="truncate leading-tight font-medium">
+                    {title}
+                  </h4>
+                  <div className="mt-1 flex flex-wrap items-center gap-2 font-mono text-xs text-[var(--muted-foreground)]">
+                    {episodeInfo && (
+                      <span className="text-[var(--accent)]">
+                        {episodeInfo}
+                      </span>
+                    )}
+                    {showTitle && (
+                      <span className="max-w-[150px] truncate">
+                        {showTitle}
+                      </span>
+                    )}
+                    <span className="opacity-60">{year}</span>
+                    {displayRuntime && (
+                      <span className="opacity-60">• {displayRuntime}</span>
+                    )}
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span
+                    className={cn(
+                      'rounded border px-2 py-0.5 font-mono text-[10px] font-medium tracking-wider uppercase',
+                      typeColor
+                    )}
+                  >
+                    {typeLabel}
+                  </span>
+                  {hasExpandableContent && (
+                    <ChevronDown
+                      className={cn(
+                        'size-4 text-[var(--muted-foreground)] transition-transform duration-200',
+                        isOpen && 'rotate-180'
+                      )}
+                    />
                   )}
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <span
-                  className={cn(
-                    'rounded border px-2 py-0.5 font-mono text-[10px] font-medium tracking-wider uppercase',
-                    typeColor
-                  )}
-                >
-                  {typeLabel}
-                </span>
-                {hasExpandableContent && (
-                  <CollapsibleTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon-xs"
-                      className="text-[var(--muted-foreground)] hover:text-[var(--accent)]"
-                      aria-expanded={isOpen}
-                      aria-controls={`entry-details-${id}`}
-                    >
-                      <ChevronDown
-                        className={cn(
-                          'size-4 transition-transform duration-200',
-                          isOpen && 'rotate-180'
-                        )}
-                      />
-                      <span className="sr-only">
-                        {isOpen ? 'Collapse' : 'Expand'} details for {title}
-                      </span>
-                    </Button>
-                  </CollapsibleTrigger>
-                )}
-              </div>
-            </div>
-          </div>
+            </button>
+          </CollapsibleTrigger>
         </div>
 
         {/* Expandable content */}

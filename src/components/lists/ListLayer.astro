@@ -1,5 +1,6 @@
 ---
 import EntryCard from '@/components/cards/EntryCard.astro'
+import ProgressToggle from '@/components/tracking/ProgressToggle'
 import type { Layer, EntryData } from '@/lib/content-utils'
 
 interface Props {
@@ -7,10 +8,9 @@ interface Props {
   entryMap: Map<string, EntryData>
   listId: string
   depth?: number
-  ProgressToggle: typeof import('@/components/tracking/ProgressToggle').default
 }
 
-const { layer, entryMap, listId, depth = 0, ProgressToggle } = Astro.props
+const { layer, entryMap, listId, depth = 0 } = Astro.props
 
 // Depth-based styling
 const depthStyles = [
@@ -85,7 +85,6 @@ const borderStyle = layer.title ? depthStyles[depth % depthStyles.length] : ''
           entryMap={entryMap}
           listId={listId}
           depth={depth + 1}
-          ProgressToggle={ProgressToggle}
         />
       ))
   }

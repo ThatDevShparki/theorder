@@ -5,7 +5,6 @@ import Header from '@/components/navigation/Header.astro'
 import DbStatusBanner from '@/components/status/DbStatusBanner'
 import ListLayer from '@/components/lists/ListLayer.astro'
 import ListProgressBar from '@/components/tracking/ListProgressBar'
-import ProgressToggle from '@/components/tracking/ProgressToggle'
 import { countEntries, createListId, type EntryData } from '@/lib/content-utils'
 
 export async function getStaticPaths() {
@@ -104,7 +103,6 @@ fandomEntries.forEach((entry) => {
             layer={layer}
             entryMap={entryMap}
             listId={compositeListId}
-            ProgressToggle={ProgressToggle}
           />
         ))
       }

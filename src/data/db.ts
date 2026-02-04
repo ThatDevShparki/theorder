@@ -64,25 +64,19 @@ export async function initDatabase(): Promise<DbStatus> {
     await db.progress.put({ listId: testKey, entries: [] })
     await db.progress.delete(testKey)
 
-    // Check if storage is persistent
-    let isPersistent = true
-    if (navigator.storage?.persisted) {
-      isPersistent = await navigator.storage.persisted()
-    }
-
     // Check quota to detect private browsing
-    let isEphemeral = false
+    // Private browsing typically has very low quota (< 120MB)
+    let isPrivateBrowsing = false
     if (navigator.storage?.estimate) {
       const estimate = await navigator.storage.estimate()
-      // Very low quota often indicates private browsing
       if (estimate.quota && estimate.quota < 120_000_000) {
-        isEphemeral = true
+        isPrivateBrowsing = true
       }
     }
 
     dbInstance = db
 
-    if (!isPersistent || isEphemeral) {
+    if (isPrivateBrowsing) {
       dbStatus = {
         mode: 'ephemeral',
         db,

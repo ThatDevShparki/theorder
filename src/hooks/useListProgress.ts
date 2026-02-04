@@ -1,6 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks'
-import { useCallback, useMemo } from 'react'
-import { getDbStatus } from '@/data/db'
+import { useCallback, useMemo, useState, useEffect } from 'react'
+import { getDbStatus, initDatabase } from '@/data/db'
 import {
   getListProgress,
   setEntryStatus as setEntryStatusQuery,
@@ -42,17 +42,29 @@ export function useListProgress(
 ): UseListProgressReturn {
   const { totalEntries, entryRuntimes } = options
 
-  // Check if database is available
-  const dbStatus = getDbStatus()
-  const isDbAvailable = dbStatus && dbStatus.mode !== 'unavailable'
+  // Track database availability reactively
+  const [isDbReady, setIsDbReady] = useState(() => {
+    const status = getDbStatus()
+    return status !== null && status.mode !== 'unavailable'
+  })
+
+  // Initialize database on mount if not already initialized
+  useEffect(() => {
+    const status = getDbStatus()
+    if (status === null) {
+      initDatabase().then((dbStatus) => {
+        setIsDbReady(dbStatus.mode !== 'unavailable')
+      })
+    }
+  }, [])
 
   // Live query for progress data
   const progress = useLiveQuery(
     async () => {
-      if (!isDbAvailable) return undefined
+      if (!isDbReady) return undefined
       return getListProgress(listId)
     },
-    [listId, isDbAvailable],
+    [listId, isDbReady],
     undefined
   )
 
@@ -62,19 +74,21 @@ export function useListProgress(
     [progress, totalEntries, entryRuntimes]
   )
 
-  // Set entry status
+  // Set entry status - ensures db is initialized before writing
   const setEntryStatus = useCallback(
     async (entryId: string, status: EntryStatus) => {
-      if (!isDbAvailable) return
+      const dbStatus = await initDatabase()
+      if (dbStatus.mode === 'unavailable') return
       await setEntryStatusQuery(listId, entryId, status)
     },
-    [listId, isDbAvailable]
+    [listId]
   )
 
   // Toggle entry between not-started and completed
   const toggleEntry = useCallback(
     async (entryId: string) => {
-      if (!isDbAvailable) return
+      const dbStatus = await initDatabase()
+      if (dbStatus.mode === 'unavailable') return
 
       const currentProgress = await getListProgress(listId)
       const entry = currentProgress?.entries.find((e) => e.entryId === entryId)
@@ -84,7 +98,7 @@ export function useListProgress(
         currentStatus === 'completed' ? 'not-started' : 'completed'
       await setEntryStatusQuery(listId, entryId, newStatus)
     },
-    [listId, isDbAvailable]
+    [listId]
   )
 
   // Get entry status from current progress
@@ -99,7 +113,7 @@ export function useListProgress(
   return {
     progress,
     stats,
-    isLoading: progress === undefined && !!isDbAvailable,
+    isLoading: progress === undefined && isDbReady,
     setEntryStatus,
     toggleEntry,
     getEntryStatus,

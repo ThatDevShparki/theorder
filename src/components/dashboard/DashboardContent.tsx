@@ -1,7 +1,10 @@
-import { useMemo } from 'react'
+import { useMemo, useState, useEffect } from 'react'
+import { useLiveQuery } from 'dexie-react-hooks'
 import { useFandomInterests, useListProgress } from '@/hooks'
 import { Skeleton } from '@/components/ui/skeleton'
 import { countEntries, createListId } from '@/lib/content-utils'
+import { getDbStatus, initDatabase } from '@/data/db'
+import { getAllProgress } from '@/data/queries'
 import type { Layer } from '@/lib/content-utils'
 
 interface FandomData {
@@ -29,13 +32,59 @@ export default function DashboardContent({
   allFandoms,
   allLists,
 }: DashboardContentProps) {
-  const { isLoading: interestsLoading, fandomIds } = useFandomInterests()
+  const { isLoading: interestsLoading, fandomIds: interestFandomIds } =
+    useFandomInterests()
 
-  // Filter to only fandoms the user is interested in
+  // Track database availability reactively
+  const [isDbReady, setIsDbReady] = useState(() => {
+    const status = getDbStatus()
+    return status !== null && status.mode !== 'unavailable'
+  })
+
+  // Initialize database on mount if not already initialized
+  useEffect(() => {
+    const status = getDbStatus()
+    if (status === null) {
+      initDatabase().then((dbStatus) => {
+        setIsDbReady(dbStatus.mode !== 'unavailable')
+      })
+    }
+  }, [])
+
+  // Get all progress to find fandoms with activity
+  const allProgress = useLiveQuery(
+    async () => {
+      if (!isDbReady) return []
+      return getAllProgress()
+    },
+    [isDbReady],
+    []
+  )
+
+  // Extract fandom IDs from progress (listId format: "fandom-id/list-id")
+  const progressFandomIds = useMemo(() => {
+    const fandomIds = new Set<string>()
+    allProgress.forEach((progress) => {
+      // Only count if there's actual progress (at least one entry started)
+      if (progress.entries.length > 0) {
+        const fandomId = progress.listId.split('/')[0]
+        fandomIds.add(fandomId)
+      }
+    })
+    return Array.from(fandomIds)
+  }, [allProgress])
+
+  // Combine interests and progress to get all active fandoms
+  const activeFandomIds = useMemo(() => {
+    const combined = new Set([...interestFandomIds, ...progressFandomIds])
+    return Array.from(combined)
+  }, [interestFandomIds, progressFandomIds])
+
+  // Filter to only active fandoms
   const activeFandoms = useMemo(() => {
-    if (fandomIds.length === 0) return []
-    return allFandoms.filter((f) => fandomIds.includes(f.id))
-  }, [allFandoms, fandomIds])
+    if (activeFandomIds.length === 0) return []
+    return allFandoms.filter((f) => activeFandomIds.includes(f.id))
+  }, [allFandoms, activeFandomIds])
 
   // Group lists by fandom
   const listsByFandom = useMemo(() => {
@@ -48,7 +97,9 @@ export default function DashboardContent({
     return map
   }, [allLists])
 
-  if (interestsLoading) {
+  const isLoading = interestsLoading || (isDbReady && allProgress === undefined)
+
+  if (isLoading) {
     return (
       <div className="space-y-6">
         {[1, 2].map((i) => (

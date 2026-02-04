@@ -1,6 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks'
-import { useCallback } from 'react'
-import { getDbStatus } from '@/data/db'
+import { useCallback, useState, useEffect } from 'react'
+import { getDbStatus, initDatabase } from '@/data/db'
 import {
   getAllInterests,
   addFandomInterest,
@@ -34,46 +34,52 @@ interface UseFandomInterestsReturn {
  * Hook for managing fandom interests
  */
 export function useFandomInterests(): UseFandomInterestsReturn {
-  // Check if database is available
-  const dbStatus = getDbStatus()
-  const isDbAvailable = dbStatus && dbStatus.mode !== 'unavailable'
+  // Track database availability reactively
+  const [isDbReady, setIsDbReady] = useState(() => {
+    const status = getDbStatus()
+    return status !== null && status.mode !== 'unavailable'
+  })
+
+  // Initialize database on mount if not already initialized
+  useEffect(() => {
+    const status = getDbStatus()
+    if (status === null) {
+      initDatabase().then((dbStatus) => {
+        setIsDbReady(dbStatus.mode !== 'unavailable')
+      })
+    }
+  }, [])
 
   // Live query for all interests
   const interests = useLiveQuery(
     async () => {
-      if (!isDbAvailable) return []
+      if (!isDbReady) return []
       return getAllInterests()
     },
-    [isDbAvailable],
+    [isDbReady],
     [] as FandomInterest[]
   )
 
   // Add fandom to interests
-  const add = useCallback(
-    async (fandomId: string) => {
-      if (!isDbAvailable) return
-      await addFandomInterest(fandomId)
-    },
-    [isDbAvailable]
-  )
+  const add = useCallback(async (fandomId: string) => {
+    const dbStatus = await initDatabase()
+    if (dbStatus.mode === 'unavailable') return
+    await addFandomInterest(fandomId)
+  }, [])
 
   // Remove fandom from interests
-  const remove = useCallback(
-    async (fandomId: string) => {
-      if (!isDbAvailable) return
-      await removeFandomInterest(fandomId)
-    },
-    [isDbAvailable]
-  )
+  const remove = useCallback(async (fandomId: string) => {
+    const dbStatus = await initDatabase()
+    if (dbStatus.mode === 'unavailable') return
+    await removeFandomInterest(fandomId)
+  }, [])
 
   // Toggle fandom interest
-  const toggle = useCallback(
-    async (fandomId: string): Promise<boolean> => {
-      if (!isDbAvailable) return false
-      return toggleQuery(fandomId)
-    },
-    [isDbAvailable]
-  )
+  const toggle = useCallback(async (fandomId: string): Promise<boolean> => {
+    const dbStatus = await initDatabase()
+    if (dbStatus.mode === 'unavailable') return false
+    return toggleQuery(fandomId)
+  }, [])
 
   // Check if fandom is in interests (from current data)
   const has = useCallback(
@@ -84,13 +90,11 @@ export function useFandomInterests(): UseFandomInterestsReturn {
   )
 
   // Reorder interests
-  const reorder = useCallback(
-    async (fandomIds: string[]) => {
-      if (!isDbAvailable) return
-      await reorderInterests(fandomIds)
-    },
-    [isDbAvailable]
-  )
+  const reorder = useCallback(async (fandomIds: string[]) => {
+    const dbStatus = await initDatabase()
+    if (dbStatus.mode === 'unavailable') return
+    await reorderInterests(fandomIds)
+  }, [])
 
   return {
     interests,
@@ -108,22 +112,36 @@ export function useFandomInterests(): UseFandomInterestsReturn {
  * Hook to check if a specific fandom is in user's interests
  */
 export function useFandomInterest(fandomId: string) {
-  const dbStatus = getDbStatus()
-  const isDbAvailable = dbStatus && dbStatus.mode !== 'unavailable'
+  // Track database availability reactively
+  const [isDbReady, setIsDbReady] = useState(() => {
+    const status = getDbStatus()
+    return status !== null && status.mode !== 'unavailable'
+  })
+
+  // Initialize database on mount if not already initialized
+  useEffect(() => {
+    const status = getDbStatus()
+    if (status === null) {
+      initDatabase().then((dbStatus) => {
+        setIsDbReady(dbStatus.mode !== 'unavailable')
+      })
+    }
+  }, [])
 
   const isInterested = useLiveQuery(
     async () => {
-      if (!isDbAvailable) return false
+      if (!isDbReady) return false
       return hasFandomInterest(fandomId)
     },
-    [fandomId, isDbAvailable],
+    [fandomId, isDbReady],
     false
   )
 
   const toggle = useCallback(async () => {
-    if (!isDbAvailable) return
+    const dbStatus = await initDatabase()
+    if (dbStatus.mode === 'unavailable') return
     await toggleQuery(fandomId)
-  }, [fandomId, isDbAvailable])
+  }, [fandomId])
 
   return {
     isInterested,

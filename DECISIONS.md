@@ -358,3 +358,40 @@ Architectural and technical decisions for The Order. Organized for Claude Code i
 **Status**: Active
 **Decision**: Track user fandom interests with priority ordering. Used to personalize home page and recommendations.
 **Rationale**: Users care about specific fandoms. Priority ordering enables "My Fandoms" section.
+
+---
+
+## [DESIGN-001] Brand Personality
+
+**Date**: 2025-02-03
+**Status**: Active
+**Decision**: Brand personality is "Epic, Reverent, Immersive". Treats fandoms with cinematic respect.
+**Rationale**: Target users are passionate fans who want their fandoms respected, not trivialized. Chronicle/saga feel matches epic source material.
+
+## [DESIGN-002] Dark Mode Only
+
+**Date**: 2025-02-03
+**Status**: Active
+**Decision**: Dark mode only, no light mode. Blacks with navy undertone.
+**Rationale**: Matches synthwave aesthetic, reduces eye strain during long viewing sessions, feels cinematic. Users likely using while watching in dark rooms.
+
+## [DESIGN-003] Synthwave Accents, Not Theme
+
+**Date**: 2025-02-03
+**Status**: Active
+**Decision**: Synthwave colors (magenta, cyan, purple, gold) used as accents only—for interactive elements, focus states, completion celebrations. Not as dominant visual theme.
+**Rationale**: Full synthwave would be visually overwhelming and hurt usability. Subtle accents please geek users while maintaining readability and professionalism.
+
+## [DESIGN-004] Typography Stack
+
+**Date**: 2025-02-03
+**Status**: Active
+**Decision**: Cinzel (serif) for headings, Inter (sans-serif) for body, JetBrains Mono for stats/data.
+**Rationale**: Cinzel evokes epic/chronicle feel matching Star Wars, Cosmere, LOTR inspiration. Inter is highly readable for content-heavy UI. Monospace for data gives technical/precise feel for stats.
+
+## [DESIGN-005] Accessibility Standard
+
+**Date**: 2025-02-03
+**Status**: Active
+**Decision**: WCAG AA compliance. Respect `prefers-reduced-motion`. Standard keyboard navigation and screen reader support.
+**Rationale**: Inclusive design without over-engineering. AA provides good contrast while allowing design flexibility. Reduced motion support critical for synthwave glows/animations.

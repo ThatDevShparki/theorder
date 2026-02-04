@@ -1,28 +1,206 @@
 ---
-import '../styles/global.css'
-// Component Imports
-import Button from '../components/Button.astro'
-
-// Full Astro Component Syntax:
-// https://docs.astro.build/basics/astro-components/
+import Layout from '../layouts/main.astro'
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" href="/favicon.ico" />
-    <meta name="generator" content={Astro.generator} />
-    <title>Astro + TailwindCSS</title>
-  </head>
+<Layout title="The Order | Design System Preview">
+  <main class="min-h-screen px-6 py-12">
+    <div class="mx-auto max-w-4xl space-y-16">
+      {/* Hero */}
+      <header class="text-center">
+        <h1
+          class="text-foreground text-5xl font-bold tracking-wide md:text-6xl"
+        >
+          The Order
+        </h1>
+        <p class="text-muted-foreground mt-4 text-xl">
+          Track your journey through your favorite fandoms
+        </p>
+      </header>
 
-  <body>
-    <div class="grid h-screen place-items-center content-center">
-      <Button>Tailwind Button in Astro!</Button>
-      <a href="/markdown-page" class="p-4 underline"
-        >Markdown is also supported...</a
+      {/* Typography */}
+      <section class="space-y-6">
+        <h2 class="text-foreground text-2xl font-semibold">Typography</h2>
+        <div class="bg-elevated space-y-4 rounded-lg p-6">
+          <div>
+            <p class="text-muted-foreground text-sm">Cinzel (Headings)</p>
+            <p class="text-3xl font-semibold">A New Hope Awaits</p>
+          </div>
+          <div>
+            <p class="text-muted-foreground text-sm">Inter (Body)</p>
+            <p class="font-sans text-lg">
+              Experience the complete saga in timeline order. Track your
+              progress, discover new stories, and never lose your place again.
+            </p>
+          </div>
+          <div>
+            <p class="text-muted-foreground text-sm">JetBrains Mono (Data)</p>
+            <p class="font-mono text-lg">
+              42h 30m remaining • 73% complete • 156 entries
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Color Palette */}
+      <section class="space-y-6">
+        <h2 class="text-foreground text-2xl font-semibold">
+          Synthwave Accents
+        </h2>
+        <div class="grid grid-cols-2 gap-4 md:grid-cols-4">
+          <div class="space-y-2 text-center">
+            <div
+              class="glow-magenta mx-auto h-20 w-20 rounded-lg bg-[var(--magenta)]"
+            >
+            </div>
+            <p class="text-sm font-medium">Magenta</p>
+            <p class="text-muted-foreground font-mono text-xs">#e040a0</p>
+          </div>
+          <div class="space-y-2 text-center">
+            <div
+              class="glow-cyan mx-auto h-20 w-20 rounded-lg bg-[var(--cyan)]"
+            >
+            </div>
+            <p class="text-sm font-medium">Cyan</p>
+            <p class="text-muted-foreground font-mono text-xs">#40c8e0</p>
+          </div>
+          <div class="space-y-2 text-center">
+            <div
+              class="glow-purple mx-auto h-20 w-20 rounded-lg bg-[var(--purple)]"
+            >
+            </div>
+            <p class="text-sm font-medium">Purple</p>
+            <p class="text-muted-foreground font-mono text-xs">#a855f7</p>
+          </div>
+          <div class="space-y-2 text-center">
+            <div
+              class="glow-gold mx-auto h-20 w-20 rounded-lg bg-[var(--gold)]"
+            >
+            </div>
+            <p class="text-sm font-medium">Gold</p>
+            <p class="text-muted-foreground font-mono text-xs">#d4a853</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Background Scale */}
+      <section class="space-y-6">
+        <h2 class="text-foreground text-2xl font-semibold">Background Scale</h2>
+        <div class="space-y-3">
+          <div class="bg-background ring-border rounded-lg p-4 ring-1">
+            <p class="text-sm font-medium">Background (Deepest)</p>
+            <p class="text-muted-foreground font-mono text-xs">#0a0a0f</p>
+          </div>
+          <div class="bg-elevated rounded-lg p-4">
+            <p class="text-sm font-medium">Elevated (Cards/Panels)</p>
+            <p class="text-muted-foreground font-mono text-xs">#12121a</p>
+          </div>
+          <div class="bg-hover rounded-lg p-4">
+            <p class="text-sm font-medium">Hover (Interactive States)</p>
+            <p class="text-muted-foreground font-mono text-xs">#1a1a24</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Sample Card */}
+      <section class="space-y-6">
+        <h2 class="text-foreground text-2xl font-semibold">
+          Sample Entry Card
+        </h2>
+        <div
+          class="bg-elevated hover:glow-magenta overflow-hidden rounded-xl transition-all"
+        >
+          <div
+            class="aspect-video bg-gradient-to-br from-[var(--purple)] to-[var(--magenta)] opacity-50"
+          >
+          </div>
+          <div class="space-y-3 p-6">
+            <div class="flex items-start justify-between">
+              <div>
+                <h3 class="text-xl font-semibold">A New Hope</h3>
+                <p class="text-muted-foreground text-sm">Episode IV • 1977</p>
+              </div>
+              <span
+                class="rounded-full bg-[var(--gold)]/20 px-3 py-1 text-xs font-medium text-[var(--gold)]"
+              >
+                Movie
+              </span>
+            </div>
+            <p class="text-muted-foreground">
+              Luke Skywalker joins forces with a Jedi Knight, a cocky pilot, a
+              Wookiee and two droids to save the galaxy from the Empire's
+              world-destroying battle station.
+            </p>
+            <div
+              class="text-muted-foreground flex items-center gap-4 font-mono text-sm"
+            >
+              <span>2h 1m</span>
+              <span>•</span>
+              <span class="text-[var(--success)]">✓ Completed</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Progress Example */}
+      <section class="space-y-6">
+        <h2 class="text-foreground text-2xl font-semibold">
+          Progress Tracking
+        </h2>
+        <div class="bg-elevated rounded-xl p-6">
+          <div class="mb-4 flex items-baseline justify-between">
+            <h3 class="text-lg font-semibold">
+              Star Wars: Chronological Order
+            </h3>
+            <span class="font-mono text-2xl font-bold text-[var(--magenta)]"
+              >73%</span
+            >
+          </div>
+          <div class="bg-muted h-3 overflow-hidden rounded-full">
+            <div
+              class="h-full w-[73%] rounded-full bg-gradient-to-r from-[var(--purple)] to-[var(--magenta)]"
+            >
+            </div>
+          </div>
+          <div
+            class="text-muted-foreground mt-4 flex justify-between font-mono text-sm"
+          >
+            <span>114 of 156 entries</span>
+            <span>~42h remaining</span>
+          </div>
+        </div>
+      </section>
+
+      {/* Status Colors */}
+      <section class="space-y-6">
+        <h2 class="text-foreground text-2xl font-semibold">Status Colors</h2>
+        <div class="grid gap-3 md:grid-cols-3">
+          <div class="bg-success/10 ring-success/30 rounded-lg p-4 ring-1">
+            <p class="text-success font-medium">Success</p>
+            <p class="text-muted-foreground text-sm">
+              Completed items, confirmations
+            </p>
+          </div>
+          <div class="bg-warning/10 ring-warning/30 rounded-lg p-4 ring-1">
+            <p class="text-warning font-medium">Warning</p>
+            <p class="text-muted-foreground text-sm">
+              Storage issues, cautions
+            </p>
+          </div>
+          <div
+            class="bg-destructive/10 ring-destructive/30 rounded-lg p-4 ring-1"
+          >
+            <p class="text-destructive font-medium">Destructive</p>
+            <p class="text-muted-foreground text-sm">Errors, deletions</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer
+        class="border-border text-muted-foreground border-t pt-8 text-center text-sm"
       >
+        <p>Design System Preview • The Order</p>
+      </footer>
     </div>
-  </body>
-</html>
+  </main>
+</Layout>

@@ -258,13 +258,107 @@ interface ExportData {
 - Location: Always visible in settings/menu
 - Works in degraded modes (exports from memory)
 
-## Design System
+## Design Context
 
-**Aesthetic**: Hyper-retro 16-bit style inspired by 70s/80s computing. Bold colors, quirky animations, pixelated touches.
+### Users
+
+Fandom enthusiasts—deep fans, nerds, and geeks—who want to experience their favorite universes in specific orders (chronological, release, custom). They're tracking progress while actively watching/reading, often on mobile. They care deeply about their fandoms and appreciate when an app respects that passion.
+
+### Brand Personality
+
+**Epic, Reverent, Immersive**
+
+The Order treats fandoms with the respect they deserve. It feels like opening an ancient chronicle or accessing a ship's computer—serious about its purpose, but with subtle touches that delight fans who notice them.
+
+### Emotional Goals
+
+- **Excitement & Discovery**: Joy of exploring fandoms, anticipation of what's next
+- **Nostalgia & Connection**: Warm feelings tied to beloved stories and characters
+- **Accomplishment**: Satisfaction from tracking progress, celebrating completions
+
+### Aesthetic Direction
+
+**Dark mode forward** with blacks that have a subtle navy undertone. Synthwave accent colors (magenta, cyan, purple, gold) used sparingly for interactive elements, progress indicators, and moments of delight—not as dominant visual elements.
+
+**Inspiration sources**:
+
+- Star Wars (epic scope, dark UI, gold accents)
+- Brandon Sanderson's Cosmere (chronicle/manuscript feel, reverence for lore)
+- Lord of the Rings (cinematic darkness, elegant typography)
+
+**What we're NOT**: Arcade/pixel aesthetic, aggressive neons everywhere, playful/casual, light mode, generic modern SaaS.
+
+### Design Principles
+
+1. **Retro for decoration, modern for function**: Display fonts and subtle glows for headers and accents; clean sans-serif and standard UI patterns for usability
+2. **Earn every glow**: Synthwave accents are rewards—use them for completed items, focus states, and interactive highlights, not backgrounds
+3. **Mobile-first, thumb-friendly**: Primary use case is tracking while watching/reading; design for one-handed phone use
+4. **Respect the content**: The fandoms are the star; UI should frame and enhance, never compete
+5. **Accessible by default**: WCAG AA contrast, keyboard navigation, screen reader support, reduced motion respect
+
+### Typography
+
+| Use        | Font               | Notes                                     |
+| ---------- | ------------------ | ----------------------------------------- |
+| Headings   | **Cinzel**         | Elegant serif, epic/chronicle feel        |
+| Body       | **Inter**          | Clean, highly readable sans-serif         |
+| Data/Stats | **JetBrains Mono** | Monospace for timestamps, stats, progress |
+
+### Color Palette
+
+**Backgrounds** (navy-tinted blacks):
+
+- `--background`: #0a0a0f (page background)
+- `--background-elevated`: #12121a (cards, panels)
+- `--background-hover`: #1a1a24 (interactive states)
+
+**Text**:
+
+- `--foreground`: #e8e8ed (primary)
+- `--foreground-muted`: #8888a0 (secondary)
+
+**Synthwave Accents** (use sparingly):
+
+- `--magenta`: #e040a0 (primary actions, CTAs, progress)
+- `--cyan`: #40c8e0 (links, info, navigation)
+- `--purple`: #a855f7 (secondary actions, selections)
+- `--gold`: #d4a853 (highlights, achievements, completion)
+
+**Semantic**:
+
+- `--success`: #22c55e
+- `--warning`: #d4a853 (uses gold)
+- `--destructive`: #ef4444
+
+### Accent Usage Guidelines
+
+| Use accents for              | Don't use accents for  |
+| ---------------------------- | ---------------------- |
+| Focus rings and hover states | Body text              |
+| Progress bars and completion | Large background areas |
+| Interactive element borders  | Cards and containers   |
+| Badges and status indicators | Navigation chrome      |
+| Celebration moments          | Everywhere—earn it     |
+
+## Design System
 
 **Approach**: Mobile-first responsive design. Desktop should work well but mobile is the priority.
 
-**Theme**: Uses CSS custom properties in `src/styles/global.css` with oklch colors. Supports light/dark modes via `.dark` class.
+**Theme**: Uses CSS custom properties in `src/styles/global.css`. Dark mode only (no light mode).
+
+**Typography**: Fonts loaded from Google Fonts in `src/layouts/main.astro`:
+
+- **Cinzel** (400-700) for headings via `font-serif` / `--font-heading`
+- **Inter** (400-700) for body via `font-sans` / `--font-body`
+- **JetBrains Mono** (400-600) for data via `font-mono` / `--font-data`
+
+**Utility Classes** (defined in `global.css`):
+
+- `bg-elevated` / `bg-hover` — Background scale variants
+- `glow-magenta` / `glow-cyan` / `glow-purple` / `glow-gold` — Box shadow glow effects
+- `text-glow-magenta` / `text-glow-gold` — Text shadow glow effects
+
+**Reduced Motion**: All glow effects and animations are disabled when `prefers-reduced-motion: reduce` is set.
 
 **Components**: Add shadcn/ui components via `pnpm dlx shadcn@latest add <component>`. Components install to `src/components/ui/`.
 

@@ -1,9 +1,19 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
-@custom-variant dark (&:is(.dark *));
+/* =============================================================================
+   THE ORDER - Design System
+   =============================================================================
+   Brand: Epic, Reverent, Immersive
+   Aesthetic: Synthwave accents on dark navy foundation
+   Typography: Cinzel (headings), Inter (body), JetBrains Mono (data)
+   ============================================================================= */
 
+/* -----------------------------------------------------------------------------
+   Theme Configuration (Tailwind CSS 4)
+   ----------------------------------------------------------------------------- */
 @theme inline {
+  /* Border radius scale */
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -11,6 +21,8 @@
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
+
+  /* Semantic color mappings */
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -26,14 +38,23 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+
+  /* Chart colors - synthwave palette */
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+
+  /* Sidebar (if needed) */
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -42,82 +63,230 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Font family mappings */
+  --font-sans: var(--font-body);
+  --font-serif: var(--font-heading);
+  --font-mono: var(--font-data);
 }
 
+/* -----------------------------------------------------------------------------
+   Design Tokens (Dark Mode Only - DESIGN-002)
+   ----------------------------------------------------------------------------- */
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  /* Base radius */
+  --radius: 0.5rem;
+
+  /* Typography - Font Families (DESIGN-004) */
+  --font-heading: 'Cinzel', ui-serif, Georgia, serif;
+  --font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-data: 'JetBrains Mono', ui-monospace, 'Cascadia Code', monospace;
+
+  /* ==========================================================================
+     Color Palette
+     ==========================================================================
+     Foundation: Dark navy blacks for depth without pure black harshness
+     Accents: Synthwave neons used sparingly for interactive elements
+     ========================================================================== */
+
+  /* Background Scale - Navy-tinted blacks */
+  --background: #0a0a0f; /* Deepest - page background */
+  --background-elevated: #12121a; /* Surface - cards, panels */
+  --background-hover: #1a1a24; /* Elevated - hover states */
+
+  /* Foreground Scale */
+  --foreground: #e8e8ed; /* Primary text - near white */
+  --foreground-muted: #8888a0; /* Secondary text - blue-gray */
+
+  /* Semantic Surface Colors */
+  --card: #12121a;
+  --card-foreground: #e8e8ed;
+  --popover: #12121a;
+  --popover-foreground: #e8e8ed;
+
+  /* ==========================================================================
+     Synthwave Accent Palette (DESIGN-003)
+     Used sparingly for: interactive elements, focus states, celebrations
+     ========================================================================== */
+
+  /* Magenta - Primary actions, CTAs, progress */
+  --magenta: #e040a0;
+  --magenta-glow: #e040a0;
+
+  /* Cyan - Links, info, navigation */
+  --cyan: #40c8e0;
+  --cyan-glow: #40c8e0;
+
+  /* Purple - Secondary actions, selections */
+  --purple: #a855f7;
+  --purple-glow: #a855f7;
+
+  /* Gold - Highlights, achievements, completion */
+  --gold: #d4a853;
+  --gold-glow: #d4a853;
+
+  /* ==========================================================================
+     Semantic Color Mappings
+     ========================================================================== */
+
+  /* Primary - Magenta (main interactive color) */
+  --primary: #e040a0;
+  --primary-foreground: #0a0a0f;
+
+  /* Secondary - Subtle, elevated backgrounds */
+  --secondary: #1a1a24;
+  --secondary-foreground: #e8e8ed;
+
+  /* Muted - De-emphasized elements */
+  --muted: #1a1a24;
+  --muted-foreground: #8888a0;
+
+  /* Accent - Cyan for interactive accents */
+  --accent: #40c8e0;
+  --accent-foreground: #0a0a0f;
+
+  /* Status Colors */
+  --destructive: #ef4444;
+  --destructive-foreground: #fef2f2;
+  --success: #22c55e;
+  --success-foreground: #052e16;
+  --warning: #d4a853;
+  --warning-foreground: #0a0a0f;
+
+  /* Border & Input */
+  --border: rgba(136, 136, 160, 0.2);
+  --input: rgba(136, 136, 160, 0.15);
+  --ring: #e040a0;
+
+  /* ==========================================================================
+     Chart Colors - Synthwave palette for data visualization
+     ========================================================================== */
+  --chart-1: #e040a0; /* Magenta */
+  --chart-2: #40c8e0; /* Cyan */
+  --chart-3: #a855f7; /* Purple */
+  --chart-4: #d4a853; /* Gold */
+  --chart-5: #22c55e; /* Success green */
+
+  /* ==========================================================================
+     Sidebar (mirrors main theme)
+     ========================================================================== */
+  --sidebar: #0a0a0f;
+  --sidebar-foreground: #e8e8ed;
+  --sidebar-primary: #e040a0;
+  --sidebar-primary-foreground: #0a0a0f;
+  --sidebar-accent: #1a1a24;
+  --sidebar-accent-foreground: #e8e8ed;
+  --sidebar-border: rgba(136, 136, 160, 0.2);
+  --sidebar-ring: #e040a0;
 }
 
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
-}
-
+/* -----------------------------------------------------------------------------
+   Base Styles
+   ----------------------------------------------------------------------------- */
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+
+  html {
+    /* Ensure dark background immediately to prevent flash */
+    background-color: #0a0a0f;
+    color-scheme: dark;
+  }
+
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-body);
+  }
+
+  /* Heading typography (DESIGN-004) */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    letter-spacing: 0.025em;
+  }
+
+  /* Monospace for data/stats */
+  code,
+  kbd,
+  samp,
+  pre,
+  [data-mono],
+  .font-mono {
+    font-family: var(--font-data);
+  }
+
+  /* Focus styles with synthwave glow */
+  :focus-visible {
+    @apply outline-ring outline-2 outline-offset-2;
+  }
+}
+
+/* -----------------------------------------------------------------------------
+   Utility Classes
+   ----------------------------------------------------------------------------- */
+@layer utilities {
+  /* Background variants */
+  .bg-elevated {
+    background-color: var(--background-elevated);
+  }
+
+  .bg-hover {
+    background-color: var(--background-hover);
+  }
+
+  /* Synthwave glow effects (use sparingly - DESIGN-003) */
+  .glow-magenta {
+    box-shadow: 0 0 20px rgba(224, 64, 160, 0.3);
+  }
+
+  .glow-cyan {
+    box-shadow: 0 0 20px rgba(64, 200, 224, 0.3);
+  }
+
+  .glow-purple {
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+  }
+
+  .glow-gold {
+    box-shadow: 0 0 20px rgba(212, 168, 83, 0.3);
+  }
+
+  /* Text glow for celebratory moments */
+  .text-glow-magenta {
+    text-shadow: 0 0 10px rgba(224, 64, 160, 0.5);
+  }
+
+  .text-glow-gold {
+    text-shadow: 0 0 10px rgba(212, 168, 83, 0.5);
+  }
+}
+
+/* -----------------------------------------------------------------------------
+   Reduced Motion Support (DESIGN-005)
+   ----------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .glow-magenta,
+  .glow-cyan,
+  .glow-purple,
+  .glow-gold,
+  .text-glow-magenta,
+  .text-glow-gold {
+    box-shadow: none;
+    text-shadow: none;
   }
 }

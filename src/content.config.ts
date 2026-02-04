@@ -78,18 +78,24 @@ const entries = defineCollection({
 })
 
 /**
- * List structure layer (recursive for 1-4 levels)
+ * Arc schema - second level grouping (no nesting)
+ * Simple grouping of entries within a saga
  */
-const layerSchema: z.ZodType<{
-  title?: string
-  description?: string
-  entries?: string[]
-  children?: unknown[]
-}> = z.object({
+const arcSchema = z.object({
   title: z.string().optional(),
   description: z.string().optional(),
   entries: z.array(z.string()).optional(),
-  children: z.lazy(() => z.array(layerSchema)).optional(),
+})
+
+/**
+ * Saga schema - top level grouping
+ * Contains entries and/or arcs (children)
+ */
+const sagaSchema = z.object({
+  title: z.string().optional(),
+  description: z.string().optional(),
+  entries: z.array(z.string()).optional(),
+  children: z.array(arcSchema).optional(),
 })
 
 /**
@@ -109,7 +115,7 @@ const lists = defineCollection({
       coverImage: image().optional(),
       estimatedRuntime: z.string().optional(),
       tags: z.array(z.string()).optional(),
-      structure: z.array(layerSchema),
+      structure: z.array(sagaSchema),
     }),
 })
 

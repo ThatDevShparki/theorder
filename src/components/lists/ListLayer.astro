@@ -1,10 +1,10 @@
 ---
 import { ExpandableEntryCard } from '@/components/cards/ExpandableEntryCard'
 import ProgressToggle from '@/components/tracking/ProgressToggle'
-import type { Layer, EntryData } from '@/lib/content-utils'
+import type { Saga, Arc, EntryData } from '@/lib/content-utils'
 
 interface Props {
-  layer: Layer
+  layer: Saga | Arc
   entryMap: Map<string, EntryData>
   fandomId: string
   depth?: number
@@ -12,62 +12,32 @@ interface Props {
 
 const { layer, entryMap, fandomId, depth = 0 } = Astro.props
 
-// Depth-based styling - no indentation, use color/size to show hierarchy
-const depthConfig = [
-  {
-    label: 'SECTION',
-    color: 'var(--magenta)',
-    titleSize: 'text-xl',
-    bgOpacity: 'bg-[var(--magenta)]/5',
-    borderColor: 'border-[var(--magenta)]/30',
-  },
-  {
-    label: 'ARC',
-    color: 'var(--cyan)',
-    titleSize: 'text-lg',
-    bgOpacity: 'bg-[var(--cyan)]/5',
-    borderColor: 'border-[var(--cyan)]/30',
-  },
-  {
-    label: 'PHASE',
-    color: 'var(--purple)',
-    titleSize: 'text-base',
-    bgOpacity: 'bg-[var(--purple)]/5',
-    borderColor: 'border-[var(--purple)]/30',
-  },
-  {
-    label: 'PART',
-    color: 'var(--gold)',
-    titleSize: 'text-base',
-    bgOpacity: 'bg-[var(--gold)]/5',
-    borderColor: 'border-[var(--gold)]/30',
-  },
-]
+// Type guard to check if layer is a Saga (has children property)
+const isSaga = (l: Saga | Arc): l is Saga => 'children' in l
 
-const config = depthConfig[depth % depthConfig.length]
+// Saga styling (depth 0) - full boxed design
+const sagaConfig = {
+  color: 'var(--magenta)',
+  titleSize: 'text-xl',
+}
 ---
 
-<div class="space-y-4">
+<div class="space-y-6">
   {
-    layer.title && (
-      <div
-        class:list={[
-          'rounded-lg border p-4',
-          config.bgOpacity,
-          config.borderColor,
-        ]}
-      >
+    /* Saga (depth 0) - Full boxed design */
+    depth === 0 && layer.title && (
+      <div class="rounded-lg border border-[var(--magenta)]/30 bg-[var(--magenta)]/5 p-4">
         {/* Header row with label and line */}
         <div class="mb-2 flex items-center gap-3">
           <span
             class="rounded px-2 py-0.5 font-mono text-[10px] tracking-widest"
-            style={`background: ${config.color}20; color: ${config.color};`}
+            style={`background: ${sagaConfig.color}20; color: ${sagaConfig.color};`}
           >
-            {config.label}
+            SAGA
           </span>
           <div
             class="h-px flex-1"
-            style={`background: linear-gradient(to right, ${config.color}40, transparent);`}
+            style={`background: linear-gradient(to right, ${sagaConfig.color}40, transparent);`}
           />
         </div>
 
@@ -75,7 +45,7 @@ const config = depthConfig[depth % depthConfig.length]
         <h3
           class:list={[
             'font-serif font-bold tracking-wider uppercase',
-            config.titleSize,
+            sagaConfig.titleSize,
           ]}
         >
           {layer.title}
@@ -84,6 +54,25 @@ const config = depthConfig[depth % depthConfig.length]
         {/* Description */}
         {layer.description && (
           <p class="mt-2 text-sm text-[var(--muted-foreground)]">
+            {layer.description}
+          </p>
+        )}
+      </div>
+    )
+  }
+
+  {
+    /* Arc (depth 1+) - Simple heading only */
+    depth > 0 && layer.title && (
+      <div class="mt-6 mb-3">
+        <div class="flex items-center gap-3">
+          <h4 class="font-mono text-sm font-medium tracking-wider text-[var(--cyan)] uppercase">
+            {layer.title}
+          </h4>
+          <div class="h-px flex-1 bg-[var(--cyan)]/20" />
+        </div>
+        {layer.description && (
+          <p class="mt-1 text-xs text-[var(--muted-foreground)]">
             {layer.description}
           </p>
         )}
@@ -140,8 +129,9 @@ const config = depthConfig[depth % depthConfig.length]
   }
 
   {
-    layer.children &&
-      (layer.children as Layer[]).map((child) => (
+    isSaga(layer) &&
+      layer.children &&
+      layer.children.map((child) => (
         <Astro.self
           layer={child}
           entryMap={entryMap}

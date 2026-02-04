@@ -42,24 +42,28 @@ tags:
 # =============================================================================
 # The 'structure' field defines the ordered hierarchy of entries.
 #
-# Structure can have 1-4 levels of nesting:
-#   Level 1: Top-level grouping (e.g., "Saga", "Era")
-#   Level 2: Sub-grouping (e.g., "Prequel Era", "Original Trilogy")
-#   Level 3: Arc or section (e.g., "Clone Wars", "Rebellion")
-#   Level 4: Fine-grained grouping (e.g., "Season 1", "Book 1")
+# Structure uses 2 levels:
+#   SAGA (Level 1): Major grouping with boxed design (e.g., "The Prequel Era")
+#   ARC (Level 2): Sub-grouping with simple heading (e.g., "The Clone Wars")
 #
-# Each level can have:
-#   - title (required): Display name
+# SAGA level can have:
+#   - title: Display name (shown in boxed design)
 #   - description (optional): Context or summary
-#   - entries (optional): Array of entry IDs at this level
-#   - children (optional): Nested levels
+#   - entries (optional): Array of entry IDs directly in saga
+#   - children (optional): Array of arcs within this saga
+#
+# ARC level can have:
+#   - title: Display name (shown as simple heading)
+#   - description (optional): Brief context
+#   - entries (optional): Array of entry IDs
+#   - NO children (arcs cannot be nested)
 #
 # Entries are referenced by their ID (filename without extension).
 # The order in this file IS the canonical order.
 # =============================================================================
 
 structure:
-  # Example: Simple 2-level structure
+  # SAGA with ARCs
   - title: 'The Prequel Era'
     description: 'The fall of the Republic and rise of the Empire (32 BBY - 19 BBY)'
     children:
@@ -73,28 +77,14 @@ structure:
           - clone-wars-movie
           - clone-wars-s01e01
           - clone-wars-s01e02
-          # ... more episodes
       - title: 'Episode III'
         entries:
           - revenge-of-the-sith
 
-  - title: 'The Imperial Era'
-    description: 'The dark times and the rise of rebellion (19 BBY - 0 BBY)'
-    children:
-      - title: 'The Bad Batch'
-        entries:
-          - bad-batch-s01e01
-          # ...
-      - title: 'Solo & Rebels'
-        entries:
-          - solo
-          - rebels-s01e01
-          # ...
-
+  # SAGA with direct entries (no arcs)
   - title: 'The Original Trilogy'
     description: 'The Galactic Civil War (0 BBY - 4 ABY)'
     entries:
-      # Can also have entries directly at level 1
       - a-new-hope
       - empire-strikes-back
       - return-of-the-jedi
@@ -109,21 +99,6 @@ structure:
 #       - entry-one
 #       - entry-two
 #       - entry-three
-# =============================================================================
-
-# =============================================================================
-# ALTERNATIVE: 4-level deep structure
-# =============================================================================
-# structure:
-#   - title: "Level 1 - Saga"
-#     children:
-#       - title: "Level 2 - Era"
-#         children:
-#           - title: "Level 3 - Arc"
-#             children:
-#               - title: "Level 4 - Section"
-#                 entries:
-#                   - entry-id
 # =============================================================================
 ---
 

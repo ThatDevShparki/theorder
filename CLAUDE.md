@@ -403,7 +403,8 @@ Three core data structures:
 │ FANDOM - Top-level container (e.g., "Star Wars")            │
 │   └── ENTRIES - Individual media (movies, episodes, books)  │
 │   └── LISTS - Ordered sequences referencing entries         │
-│         └── LAYERS - 1-4 level hierarchy for visual grouping│
+│         └── SAGA - Top-level grouping (boxed design)        │
+│               └── ARC - Second-level grouping (heading only)│
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -430,8 +431,9 @@ src/content/fandoms/
 **Key Concepts**:
 
 - **Entries** are stored once per fandom, referenced by ID in lists
-- **Lists** define order via `structure` field with 1-4 level hierarchy
-- **Layers** in lists are for visual grouping only; progress tracks entries
+- **Lists** define order via `structure` field with 2-level hierarchy
+- **Sagas** are top-level groupings with boxed design (border, background, label)
+- **Arcs** are second-level groupings with simple heading-only design
 - **Backlinks** on entries point users to streaming/purchase options
 
 ## Multimedia

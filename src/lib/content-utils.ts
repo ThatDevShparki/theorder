@@ -3,15 +3,31 @@
  */
 
 /**
- * Layer structure from list schema
- * Note: children is typed as unknown[] in the Zod schema due to recursive typing limitations
+ * Arc - second level grouping (no nesting)
+ * Simple grouping of entries within a saga
  */
-export interface Layer {
+export interface Arc {
   title?: string
   description?: string
   entries?: string[]
-  children?: Layer[] | unknown[]
 }
+
+/**
+ * Saga - top level grouping
+ * Contains entries and/or arcs (children)
+ */
+export interface Saga {
+  title?: string
+  description?: string
+  entries?: string[]
+  children?: Arc[]
+}
+
+/**
+ * Layer is a union type for backwards compatibility
+ * Represents either a Saga (depth 0) or Arc (depth 1)
+ */
+export type Layer = Saga | Arc
 
 /**
  * Link to external service (streaming, purchase, etc.)
@@ -45,17 +61,21 @@ export interface EntryData {
 }
 
 /**
- * Count total entries in a list structure (recursive)
+ * Count total entries in a list structure
  */
-export function countEntries(structure: Layer[]): number {
+export function countEntries(structure: Saga[]): number {
   let count = 0
 
-  for (const layer of structure) {
-    if (layer.entries) {
-      count += layer.entries.length
+  for (const saga of structure) {
+    if (saga.entries) {
+      count += saga.entries.length
     }
-    if (layer.children) {
-      count += countEntries(layer.children as Layer[])
+    if (saga.children) {
+      for (const arc of saga.children) {
+        if (arc.entries) {
+          count += arc.entries.length
+        }
+      }
     }
   }
 
@@ -65,15 +85,19 @@ export function countEntries(structure: Layer[]): number {
 /**
  * Flatten entries from a list structure into an ordered array
  */
-export function flattenEntries(structure: Layer[]): string[] {
+export function flattenEntries(structure: Saga[]): string[] {
   const entries: string[] = []
 
-  for (const layer of structure) {
-    if (layer.entries) {
-      entries.push(...layer.entries)
+  for (const saga of structure) {
+    if (saga.entries) {
+      entries.push(...saga.entries)
     }
-    if (layer.children) {
-      entries.push(...flattenEntries(layer.children as Layer[]))
+    if (saga.children) {
+      for (const arc of saga.children) {
+        if (arc.entries) {
+          entries.push(...arc.entries)
+        }
+      }
     }
   }
 
@@ -121,7 +145,7 @@ export function getEntryRuntime(entry: EntryData): number {
  * Compute total runtime of a list in minutes
  */
 export function computeListRuntime(
-  structure: Layer[],
+  structure: Saga[],
   entryMap: Map<string, EntryData>
 ): number {
   const entryIds = flattenEntries(structure)
@@ -141,7 +165,7 @@ export function computeListRuntime(
  * Create a map of entry IDs to runtimes
  */
 export function createRuntimeMap(
-  structure: Layer[],
+  structure: Saga[],
   entryMap: Map<string, EntryData>
 ): Map<string, number> {
   const runtimeMap = new Map<string, number>()

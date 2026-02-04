@@ -322,12 +322,13 @@ Architectural and technical decisions for The Order. Organized for Claude Code i
 **Decision**: Three core data structures: Fandom (container), Entry (individual media), List (ordered sequence referencing entries). Entries stored once per fandom, lists reference by ID.
 **Rationale**: Avoids duplication—same entry (e.g., "A New Hope") can appear in multiple lists. Single source of truth for entry metadata.
 
-## [CONTENT-004] List Layer Hierarchy
+## [CONTENT-004] List Hierarchy (Sagas & Arcs)
 
 **Date**: 2025-02-03
+**Updated**: 2025-02-04
 **Status**: Active
-**Decision**: Lists support 1-4 levels of visual hierarchy via `structure` field with nested `children`. Layers are for visual grouping only; progress tracks individual entries.
-**Rationale**: Allows rich organization (eras, arcs, seasons) without complicating progress tracking. Users see "Prequel Era > Clone Wars > Episode", progress stores "completed entry X".
+**Decision**: Lists use 2-level visual hierarchy: **Sagas** (top-level with boxed design) and **Arcs** (second-level with heading-only design). Structure enforced in schema—arcs cannot contain children.
+**Rationale**: Simplified from 4-level hierarchy which was over-engineered. Two levels provide sufficient organization (eras/arcs) with clearer visual distinction. Sagas get prominent boxed styling; arcs are lightweight headings.
 
 ## [CONTENT-005] Entry Backlinks
 

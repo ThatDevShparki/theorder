@@ -427,7 +427,8 @@
   .glow-purple,
   .glow-gold,
   .text-glow-magenta,
-  .text-glow-gold {
+  .text-glow-gold,
+  .text-glow-cyan {
     box-shadow: none;
     text-shadow: none;
   }

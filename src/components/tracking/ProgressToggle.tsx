@@ -29,7 +29,7 @@ const ProgressToggle = memo(function ProgressToggle({
       onCheckedChange={() => toggle()}
       disabled={isLoading}
       className={cn(
-        'h-5 w-5 rounded-sm border-2 transition-colors',
+        'h-5 w-5 rounded-sm border-2 transition-all duration-200',
         isCompleted && 'glow-magenta border-primary bg-primary',
         isInProgress && 'border-accent',
         !isCompleted && !isInProgress && 'border-muted-foreground/50',

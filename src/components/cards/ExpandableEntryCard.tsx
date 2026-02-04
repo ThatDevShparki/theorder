@@ -156,7 +156,7 @@ export const ExpandableEntryCard = memo(function ExpandableEntryCard({
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
       <div
         className={cn(
-          'group relative rounded-lg border border-transparent transition-all',
+          'group relative rounded-lg border border-transparent transition-all duration-200 ease-out',
           isOpen
             ? 'border-[var(--cyan)]/20 bg-[var(--background-hover)]'
             : 'bg-[var(--background-elevated)] hover:border-[var(--cyan)]/10'
@@ -293,7 +293,7 @@ export const ExpandableEntryCard = memo(function ExpandableEntryCard({
                       href={link.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="bg-background hover:bg-accent inline-flex min-h-[44px] items-center gap-2 rounded-md border px-3 py-2 text-sm transition-colors"
+                      className="bg-background hover:bg-accent hover:border-accent inline-flex min-h-[44px] items-center gap-2 rounded-md border px-3 py-2 text-sm transition-all duration-200"
                     >
                       {getLinkIcon(link.type)}
                       <span>{link.label}</span>

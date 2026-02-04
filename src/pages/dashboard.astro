@@ -5,9 +5,10 @@ import Header from '@/components/navigation/Header.astro'
 import DbStatusBanner from '@/components/status/DbStatusBanner'
 import DashboardContent from '@/components/dashboard/DashboardContent'
 
-// Get all fandoms and lists at build time
+// Get all fandoms, lists, and entries at build time
 const fandomsCollection = await getCollection('fandoms')
 const listsCollection = await getCollection('lists')
+const entriesCollection = await getCollection('entries')
 
 // Transform to props for the dashboard component
 const allFandoms = fandomsCollection.map((f) => ({
@@ -26,6 +27,22 @@ const allLists = listsCollection.map((l) => {
     structure: l.data.structure,
   }
 })
+
+// Build entry lookup map with essential display data
+const allEntries = Object.fromEntries(
+  entriesCollection.map((e) => [
+    e.data.id,
+    {
+      id: e.data.id,
+      title: e.data.title,
+      type: e.data.type,
+      seasonNumber: e.data.seasonNumber,
+      episodeNumber: e.data.episodeNumber,
+      showTitle: e.data.showTitle,
+      runtime: e.data.runtime,
+    },
+  ])
+)
 ---
 
 <Layout title="The Order | Dashboard">
@@ -40,6 +57,11 @@ const allLists = listsCollection.map((l) => {
       </p>
     </header>
 
-    <DashboardContent client:load allFandoms={allFandoms} allLists={allLists} />
+    <DashboardContent
+      client:load
+      allFandoms={allFandoms}
+      allLists={allLists}
+      allEntries={allEntries}
+    />
   </main>
 </Layout>

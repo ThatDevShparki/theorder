@@ -1,5 +1,6 @@
 import { useMemo, useState, useEffect } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
+import { Play } from 'lucide-react'
 import { useFavorites, useListProgress } from '@/hooks'
 import { Skeleton } from '@/components/ui/skeleton'
 import { flattenEntries, createListId } from '@/lib/content-utils'
@@ -20,9 +21,20 @@ interface ListData {
   structure: Layer[]
 }
 
+interface EntryDisplayData {
+  id: string
+  title: string
+  type: string
+  seasonNumber?: number
+  episodeNumber?: number
+  showTitle?: string
+  runtime?: number
+}
+
 interface DashboardContentProps {
   allFandoms: FandomData[]
   allLists: ListData[]
+  allEntries: Record<string, EntryDisplayData>
 }
 
 /**
@@ -31,6 +43,7 @@ interface DashboardContentProps {
 export default function DashboardContent({
   allFandoms,
   allLists,
+  allEntries,
 }: DashboardContentProps) {
   const {
     isLoading: favoritesLoading,
@@ -55,7 +68,7 @@ export default function DashboardContent({
   }, [])
 
   // Get all completed/in-progress entries to find fandoms with activity
-  const allEntries = useLiveQuery(
+  const progressEntries = useLiveQuery(
     async () => {
       if (!isDbReady) return []
       return getAllCompletedEntries()
@@ -67,11 +80,11 @@ export default function DashboardContent({
   // Extract fandom IDs from entries with progress
   const progressFandomIds = useMemo(() => {
     const fandomIds = new Set<string>()
-    allEntries.forEach((entry) => {
+    progressEntries.forEach((entry) => {
       fandomIds.add(entry.fandomId)
     })
     return Array.from(fandomIds)
-  }, [allEntries])
+  }, [progressEntries])
 
   // Combine favorites and progress to get all active fandoms
   const activeFandomIds = useMemo(() => {
@@ -108,7 +121,8 @@ export default function DashboardContent({
     return map
   }, [allLists])
 
-  const isLoading = favoritesLoading || (isDbReady && allEntries === undefined)
+  const isLoading =
+    favoritesLoading || (isDbReady && progressEntries === undefined)
 
   if (isLoading) {
     return (
@@ -152,6 +166,7 @@ export default function DashboardContent({
             lists={lists}
             isFavorite={isFavorite}
             favoriteListIds={favoriteListIdSet}
+            allEntries={allEntries}
           />
         )
       })}
@@ -164,6 +179,7 @@ interface FandomProgressProps {
   lists: ListData[]
   isFavorite: boolean
   favoriteListIds: Set<string>
+  allEntries: Record<string, EntryDisplayData>
 }
 
 function FandomProgress({
@@ -171,6 +187,7 @@ function FandomProgress({
   lists,
   isFavorite,
   favoriteListIds,
+  allEntries,
 }: FandomProgressProps) {
   return (
     <div className="bg-elevated rounded-xl p-6">
@@ -194,7 +211,7 @@ function FandomProgress({
       </a>
 
       {lists.length > 0 && (
-        <div className="mt-4 space-y-3">
+        <div className="mt-4 space-y-4">
           {lists.map((list) => {
             const listId = createListId(fandom.id, list.id)
             const isListFavorite = favoriteListIds.has(listId)
@@ -204,6 +221,7 @@ function FandomProgress({
                 list={list}
                 fandomId={fandom.id}
                 isFavorite={isListFavorite}
+                allEntries={allEntries}
               />
             )
           })}
@@ -217,41 +235,108 @@ interface ListProgressRowProps {
   list: ListData
   fandomId: string
   isFavorite: boolean
+  allEntries: Record<string, EntryDisplayData>
 }
 
-function ListProgressRow({ list, fandomId, isFavorite }: ListProgressRowProps) {
+function ListProgressRow({
+  list,
+  fandomId,
+  isFavorite,
+  allEntries,
+}: ListProgressRowProps) {
   const listId = createListId(fandomId, list.id)
   const entryIds = flattenEntries(list.structure)
-  const { stats, isLoading } = useListProgress(listId, { entryIds, fandomId })
+  const { stats, isLoading, completions } = useListProgress(listId, {
+    entryIds,
+    fandomId,
+  })
+
+  // Find the next unwatched entry
+  const nextEntry = useMemo(() => {
+    for (const entryId of entryIds) {
+      const status = completions.get(entryId)
+      if (!status || status !== 'completed') {
+        return allEntries[entryId]
+      }
+    }
+    return null
+  }, [entryIds, completions, allEntries])
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-between">
-        <Skeleton className="h-4 w-32" />
-        <Skeleton className="h-4 w-16" />
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <Skeleton className="h-4 w-32" />
+          <Skeleton className="h-4 w-16" />
+        </div>
+        <Skeleton className="h-1.5 w-full" />
       </div>
     )
   }
 
   const { progressPercent, completedCount, totalEntries } = stats
+  const isComplete = completedCount === totalEntries
+
+  // Format episode info
+  const formatEpisodeInfo = (entry: EntryDisplayData) => {
+    if (
+      entry.type === 'tv-episode' &&
+      entry.seasonNumber &&
+      entry.episodeNumber
+    ) {
+      return `S${entry.seasonNumber}E${entry.episodeNumber}`
+    }
+    return null
+  }
 
   return (
-    <a href={`/fandom/${fandomId}/list/${list.id}`} className="group block">
-      <div className="flex items-center justify-between text-sm">
-        <span className="text-muted-foreground group-hover:text-foreground flex items-center gap-1">
-          {isFavorite && <span className="text-xs text-[var(--gold)]">★</span>}
-          {list.title}
-        </span>
-        <span className="font-mono text-[var(--magenta)]">
-          {completedCount}/{totalEntries}
-        </span>
-      </div>
-      <div className="bg-muted mt-1 h-1.5 overflow-hidden rounded-full">
-        <div
-          className="h-full rounded-full bg-gradient-to-r from-[var(--purple)] to-[var(--magenta)] transition-all duration-500"
-          style={{ width: `${progressPercent}%` }}
-        />
-      </div>
-    </a>
+    <div className="space-y-2">
+      <a href={`/fandom/${fandomId}/list/${list.id}`} className="group block">
+        <div className="flex items-center justify-between text-sm">
+          <span className="text-muted-foreground group-hover:text-foreground flex items-center gap-1">
+            {isFavorite && (
+              <span className="text-xs text-[var(--gold)]">★</span>
+            )}
+            {list.title}
+          </span>
+          <span className="font-mono text-[var(--magenta)]">
+            {completedCount}/{totalEntries}
+          </span>
+        </div>
+        <div className="bg-muted mt-1 h-1.5 overflow-hidden rounded-full">
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-[var(--purple)] to-[var(--magenta)] transition-all duration-500"
+            style={{ width: `${progressPercent}%` }}
+          />
+        </div>
+      </a>
+
+      {/* Watch Next callout - show if list is not complete */}
+      {!isComplete && nextEntry && (
+        <a
+          href={`/fandom/${fandomId}/list/${list.id}`}
+          className="border-border/50 bg-background/50 hover:bg-background group flex items-center gap-3 rounded-lg border p-3 transition-colors hover:border-[var(--cyan)]/50"
+        >
+          <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[var(--cyan)]/20 text-[var(--cyan)]">
+            <Play className="size-4" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+              Watch Next
+            </div>
+            <div className="truncate font-medium group-hover:text-[var(--cyan)]">
+              {nextEntry.title}
+            </div>
+            {(formatEpisodeInfo(nextEntry) || nextEntry.showTitle) && (
+              <div className="text-muted-foreground truncate text-sm">
+                {formatEpisodeInfo(nextEntry)}
+                {formatEpisodeInfo(nextEntry) && nextEntry.showTitle && ' • '}
+                {nextEntry.showTitle}
+              </div>
+            )}
+          </div>
+        </a>
+      )}
+    </div>
   )
 }

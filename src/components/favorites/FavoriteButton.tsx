@@ -1,3 +1,4 @@
+import { memo, useCallback } from 'react'
 import { useFavorite } from '@/hooks'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -14,7 +15,7 @@ interface FavoriteButtonProps {
 /**
  * Button to favorite/unfavorite a fandom or list
  */
-export default function FavoriteButton({
+const FavoriteButton = memo(function FavoriteButton({
   type,
   itemId,
   fandomId,
@@ -23,17 +24,22 @@ export default function FavoriteButton({
 }: FavoriteButtonProps) {
   const { isFavorite, toggle } = useFavorite(type, itemId, fandomId)
 
+  const handleClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault()
+      e.stopPropagation()
+      toggle()
+    },
+    [toggle]
+  )
+
   const label = isFavorite ? 'Remove from favorites' : 'Add to favorites'
 
   if (variant === 'icon') {
     return (
       <button
         type="button"
-        onClick={(e) => {
-          e.preventDefault()
-          e.stopPropagation()
-          toggle()
-        }}
+        onClick={handleClick}
         className={cn(
           'focus-visible:outline-ring rounded-sm text-2xl transition-transform focus-visible:outline-2 focus-visible:outline-offset-2 motion-safe:hover:scale-110',
           isFavorite
@@ -51,11 +57,7 @@ export default function FavoriteButton({
 
   return (
     <Button
-      onClick={(e) => {
-        e.preventDefault()
-        e.stopPropagation()
-        toggle()
-      }}
+      onClick={handleClick}
       variant={isFavorite ? 'default' : 'outline'}
       className={cn(
         'gap-2',
@@ -67,4 +69,6 @@ export default function FavoriteButton({
       <span>{isFavorite ? 'Favorited' : 'Add to Favorites'}</span>
     </Button>
   )
-}
+})
+
+export default FavoriteButton

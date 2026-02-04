@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef, useCallback, memo } from 'react'
 import { Input } from '@/components/ui/input'
 
 interface FandomData {
@@ -16,38 +16,59 @@ interface FandomSearchProps {
 /**
  * Search input that filters fandoms by name/description
  * Calls onFilter with matching fandom IDs (or null for no filter)
+ * Uses debouncing to avoid excessive re-renders during typing
  */
-export default function FandomSearch({
+const FandomSearch = memo(function FandomSearch({
   fandoms,
   onFilter,
   placeholder = 'Search fandoms...',
 }: FandomSearchProps) {
   const [query, setQuery] = useState('')
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const handleChange = (value: string) => {
-    setQuery(value)
+  // Memoize the filter function to avoid recreating on each render
+  const filterFandoms = useCallback(
+    (value: string) => {
+      if (!value.trim()) {
+        onFilter(null)
+        return
+      }
 
-    if (!value.trim()) {
-      onFilter(null)
-      return
+      const lowerQuery = value.toLowerCase()
+      const filtered = fandoms.filter(
+        (fandom) =>
+          fandom.name.toLowerCase().includes(lowerQuery) ||
+          fandom.description?.toLowerCase().includes(lowerQuery)
+      )
+
+      onFilter(filtered.map((f) => f.id))
+    },
+    [fandoms, onFilter]
+  )
+
+  // Debounce the filter operation
+  useEffect(() => {
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current)
     }
 
-    const lowerQuery = value.toLowerCase()
-    const filtered = fandoms.filter(
-      (fandom) =>
-        fandom.name.toLowerCase().includes(lowerQuery) ||
-        fandom.description?.toLowerCase().includes(lowerQuery)
-    )
+    debounceRef.current = setTimeout(() => {
+      filterFandoms(query)
+    }, 150)
 
-    onFilter(filtered.map((f) => f.id))
-  }
+    return () => {
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current)
+      }
+    }
+  }, [query, filterFandoms])
 
   return (
     <div className="relative">
       <Input
         type="search"
         value={query}
-        onChange={(e) => handleChange(e.target.value)}
+        onChange={(e) => setQuery(e.target.value)}
         placeholder={placeholder}
         className="bg-elevated pl-10"
       />
@@ -66,4 +87,6 @@ export default function FandomSearch({
       </svg>
     </div>
   )
-}
+})
+
+export default FandomSearch

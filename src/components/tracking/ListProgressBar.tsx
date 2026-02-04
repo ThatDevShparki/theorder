@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { useListProgress } from '@/hooks'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
@@ -13,7 +14,7 @@ interface ListProgressBarProps {
 /**
  * Progress bar showing completion status for a list
  */
-export default function ListProgressBar({
+const ListProgressBar = memo(function ListProgressBar({
   listId,
   entryIds,
   fandomId,
@@ -60,4 +61,6 @@ export default function ListProgressBar({
       )}
     </div>
   )
-}
+})
+
+export default ListProgressBar

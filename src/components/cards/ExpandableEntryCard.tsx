@@ -1,4 +1,4 @@
-import * as React from 'react'
+import { memo, useState } from 'react'
 import { ChevronDown, ExternalLink, Play, ShoppingCart, Tv } from 'lucide-react'
 import {
   Collapsible,
@@ -109,7 +109,7 @@ function getLinkTypeLabel(type?: string): string {
   }
 }
 
-export function ExpandableEntryCard({
+export const ExpandableEntryCard = memo(function ExpandableEntryCard({
   id,
   title,
   type,
@@ -126,7 +126,7 @@ export function ExpandableEntryCard({
   compact = false,
   children,
 }: ExpandableEntryCardProps) {
-  const [isOpen, setIsOpen] = React.useState(false)
+  const [isOpen, setIsOpen] = useState(false)
 
   const typeLabel = getEntryTypeLabel(type)
   const typeColor = getEntryTypeColor(type)
@@ -254,9 +254,9 @@ export function ExpandableEntryCard({
                   Where to Watch
                 </h5>
                 <div className="flex flex-wrap gap-2">
-                  {links.map((link, index) => (
+                  {links.map((link) => (
                     <a
-                      key={index}
+                      key={`${link.label}-${link.url}`}
                       href={link.url}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -277,4 +277,4 @@ export function ExpandableEntryCard({
       </div>
     </Collapsible>
   )
-}
+})

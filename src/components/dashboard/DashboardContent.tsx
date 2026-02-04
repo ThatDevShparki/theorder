@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from 'react'
+import { memo, useMemo, useState, useEffect } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { Play } from 'lucide-react'
 import { useFavorites, useListProgress } from '@/hooks'
@@ -182,7 +182,7 @@ interface FandomProgressProps {
   allEntries: Record<string, EntryDisplayData>
 }
 
-function FandomProgress({
+const FandomProgress = memo(function FandomProgress({
   fandom,
   lists,
   isFavorite,
@@ -229,7 +229,7 @@ function FandomProgress({
       )}
     </div>
   )
-}
+})
 
 interface ListProgressRowProps {
   list: ListData
@@ -238,14 +238,17 @@ interface ListProgressRowProps {
   allEntries: Record<string, EntryDisplayData>
 }
 
-function ListProgressRow({
+const ListProgressRow = memo(function ListProgressRow({
   list,
   fandomId,
   isFavorite,
   allEntries,
 }: ListProgressRowProps) {
   const listId = createListId(fandomId, list.id)
-  const entryIds = flattenEntries(list.structure)
+  const entryIds = useMemo(
+    () => flattenEntries(list.structure),
+    [list.structure]
+  )
   const { stats, isLoading, completions } = useListProgress(listId, {
     entryIds,
     fandomId,
@@ -279,18 +282,6 @@ function ListProgressRow({
   const { progressPercent, completedCount, totalEntries } = stats
   const isComplete = completedCount === totalEntries
 
-  // Format episode info
-  const formatEpisodeInfo = (entry: EntryDisplayData) => {
-    if (
-      entry.type === 'tv-episode' &&
-      entry.seasonNumber &&
-      entry.episodeNumber
-    ) {
-      return `S${entry.seasonNumber}E${entry.episodeNumber}`
-    }
-    return null
-  }
-
   return (
     <div className="space-y-2">
       <a href={`/fandom/${fandomId}/list/${list.id}`} className="group block">
@@ -313,30 +304,51 @@ function ListProgressRow({
 
       {/* Watch Next callout - show if list is not complete */}
       {!isComplete && nextEntry && (
-        <a
-          href={`/fandom/${fandomId}/list/${list.id}`}
-          className="border-border/50 bg-background/50 hover:bg-background group hover:border-accent/50 flex items-center gap-3 rounded-lg border p-3 transition-colors"
-        >
-          <div className="bg-accent/20 text-accent flex size-8 shrink-0 items-center justify-center rounded-full">
-            <Play className="size-4" />
-          </div>
-          <div className="min-w-0 flex-1">
-            <div className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
-              Watch Next
-            </div>
-            <div className="group-hover:text-accent truncate font-medium">
-              {nextEntry.title}
-            </div>
-            {(formatEpisodeInfo(nextEntry) || nextEntry.showTitle) && (
-              <div className="text-muted-foreground truncate text-sm">
-                {formatEpisodeInfo(nextEntry)}
-                {formatEpisodeInfo(nextEntry) && nextEntry.showTitle && ' • '}
-                {nextEntry.showTitle}
-              </div>
-            )}
-          </div>
-        </a>
+        <WatchNextCard fandomId={fandomId} listId={list.id} entry={nextEntry} />
       )}
     </div>
   )
+})
+
+interface WatchNextCardProps {
+  fandomId: string
+  listId: string
+  entry: EntryDisplayData
 }
+
+const WatchNextCard = memo(function WatchNextCard({
+  fandomId,
+  listId,
+  entry,
+}: WatchNextCardProps) {
+  const episodeInfo =
+    entry.type === 'tv-episode' && entry.seasonNumber && entry.episodeNumber
+      ? `S${entry.seasonNumber}E${entry.episodeNumber}`
+      : null
+
+  return (
+    <a
+      href={`/fandom/${fandomId}/list/${listId}`}
+      className="border-border/50 bg-background/50 hover:bg-background group hover:border-accent/50 flex items-center gap-3 rounded-lg border p-3 transition-colors"
+    >
+      <div className="bg-accent/20 text-accent flex size-8 shrink-0 items-center justify-center rounded-full">
+        <Play className="size-4" />
+      </div>
+      <div className="min-w-0 flex-1">
+        <div className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+          Watch Next
+        </div>
+        <div className="group-hover:text-accent truncate font-medium">
+          {entry.title}
+        </div>
+        {(episodeInfo || entry.showTitle) && (
+          <div className="text-muted-foreground truncate text-sm">
+            {episodeInfo}
+            {episodeInfo && entry.showTitle && ' • '}
+            {entry.showTitle}
+          </div>
+        )}
+      </div>
+    </a>
+  )
+})

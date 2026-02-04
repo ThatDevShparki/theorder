@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { useEntryStatus } from '@/hooks'
 import { Checkbox } from '@/components/ui/checkbox'
 import { cn } from '@/lib/utils'
@@ -12,7 +13,7 @@ interface ProgressToggleProps {
  * Interactive checkbox for marking entries as complete
  * Entry status is global - shared across all lists
  */
-export default function ProgressToggle({
+const ProgressToggle = memo(function ProgressToggle({
   entryId,
   fandomId,
   className,
@@ -37,4 +38,6 @@ export default function ProgressToggle({
       aria-label={`Mark as ${isCompleted ? 'not started' : 'completed'}`}
     />
   )
-}
+})
+
+export default ProgressToggle

@@ -312,3 +312,49 @@ Architectural and technical decisions for The Order. Organized for Claude Code i
 **Supersedes**: ARCH-006
 **Decision**: Use `dexie-react-hooks` (`useLiveQuery`) instead of TanStack Query for reactive data.
 **Rationale**: TanStack Query designed for API caching and network request management. For local-only IndexedDB, `useLiveQuery` provides reactivity with less abstraction. Removes unnecessary layer between hooks and Dexie.
+
+---
+
+## [CONTENT-003] Three-Tier Content Model
+
+**Date**: 2025-02-03
+**Status**: Active
+**Decision**: Three core data structures: Fandom (container), Entry (individual media), List (ordered sequence referencing entries). Entries stored once per fandom, lists reference by ID.
+**Rationale**: Avoids duplication—same entry (e.g., "A New Hope") can appear in multiple lists. Single source of truth for entry metadata.
+
+## [CONTENT-004] List Layer Hierarchy
+
+**Date**: 2025-02-03
+**Status**: Active
+**Decision**: Lists support 1-4 levels of visual hierarchy via `structure` field with nested `children`. Layers are for visual grouping only; progress tracks individual entries.
+**Rationale**: Allows rich organization (eras, arcs, seasons) without complicating progress tracking. Users see "Prequel Era > Clone Wars > Episode", progress stores "completed entry X".
+
+## [CONTENT-005] Entry Backlinks
+
+**Date**: 2025-02-03
+**Status**: Active
+**Decision**: Entries include `links` array with label, URL, and type (stream/purchase/rent/free/library) pointing to external services.
+**Rationale**: Core feature—users need to know WHERE to watch/read. Types enable filtering by availability.
+
+## [CONTENT-006] Templates at Repo Root
+
+**Date**: 2025-02-03
+**Status**: Active
+**Decision**: Content templates live in `/templates/` at repo root, not in content folders.
+**Rationale**: Clear separation from actual content. Templates won't be picked up by content collections.
+
+---
+
+## [DATA-005] Progress Per List
+
+**Date**: 2025-02-03
+**Status**: Active
+**Decision**: Progress tracked per list, not per entry. ListProgress contains array of EntryProgress with status, timestamps, and position.
+**Rationale**: Same entry might be in different lists with different progress. Enables per-list stats (speed, investment, streak).
+
+## [DATA-006] User Interests for Prioritization
+
+**Date**: 2025-02-03
+**Status**: Active
+**Decision**: Track user fandom interests with priority ordering. Used to personalize home page and recommendations.
+**Rationale**: Users care about specific fandoms. Priority ordering enables "My Fandoms" section.

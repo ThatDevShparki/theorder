@@ -1,0 +1,103 @@
+---
+# =============================================================================
+# ENTRY TEMPLATE
+# =============================================================================
+# Copy this file to: src/content/fandoms/<fandom>/entries/<entry-slug>.mdx
+#
+# An entry is a single piece of media (movie, episode, book, etc.)
+# Entries are referenced by lists to create ordered viewing/reading guides.
+# =============================================================================
+
+# REQUIRED FIELDS
+# -----------------------------------------------------------------------------
+
+# URL-safe identifier (should match filename without extension)
+id: 'entry-slug'
+
+# Display title
+title: 'Entry Title'
+
+# Media type - determines which optional fields are relevant
+# Options: movie | tv-episode | tv-special | book | comic | short | game
+type: 'movie'
+
+# Original release date (ISO format)
+releaseDate: '1999-05-19'
+
+# OPTIONAL FIELDS (Common)
+# -----------------------------------------------------------------------------
+
+# Brief synopsis (1-2 sentences, no spoilers)
+description: 'A brief description of this entry.'
+
+# Poster or cover image (stored in src/assets/fandoms/<fandom>/entries/)
+poster: '@/assets/fandoms/fandom-slug/entries/entry-slug.jpg'
+
+# OPTIONAL FIELDS (Type-specific)
+# -----------------------------------------------------------------------------
+
+# For movies, tv-episodes, shorts: runtime in minutes
+runtime: 136
+
+# For tv-episodes: season and episode numbers
+seasonNumber: 1
+episodeNumber: 1
+
+# For tv-episodes: the parent show name (for display context)
+showTitle: 'Show Name'
+
+# For books/comics: page count
+pages: 350
+
+# For books: author(s)
+authors:
+  - 'Author Name'
+
+# For movies: director(s)
+directors:
+  - 'Director Name'
+
+# BACKLINKS - Where to watch/read
+# -----------------------------------------------------------------------------
+# These link users to streaming services, purchase options, etc.
+# type: stream (subscription) | purchase (buy) | rent | free | library
+
+links:
+  - label: 'Disney+'
+    url: 'https://www.disneyplus.com/movies/...'
+    type: 'stream'
+  - label: 'Amazon Prime'
+    url: 'https://www.amazon.com/...'
+    type: 'purchase'
+  - label: 'YouTube'
+    url: 'https://www.youtube.com/...'
+    type: 'rent'
+
+# METADATA
+# -----------------------------------------------------------------------------
+
+# Content rating (optional)
+rating: 'PG-13'
+
+# Language (ISO 639-1 code)
+language: 'en'
+
+# Tags for filtering (optional)
+tags:
+  - 'canon'
+  - 'skywalker-saga'
+---
+
+{/_
+Optional MDX content below frontmatter.
+Use for extended synopsis, notes, or context.
+Keep spoiler-free or clearly mark spoilers.
+_/}
+
+## Synopsis
+
+Extended description or synopsis goes here.
+
+## Notes
+
+Any viewing notes, context, or recommendations.

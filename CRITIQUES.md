@@ -46,9 +46,14 @@ After each planning session, critique the design. Track concerns here with resol
 ## [DATA-C002] No Defined Data Model
 
 **Date**: 2025-02-03
-**Status**: Open
+**Status**: Resolved
 **Critique**: Extensive architecture discussion without defining actual schemas. What fields does progress have? What frontmatter is required? How are entries identified?
-**Action Needed**: Define content schema and progress schema before scaffolding.
+**Resolution**: Defined complete schemas:
+
+- Content: Fandom, Entry, List schemas in `src/content.config.ts`
+- Progress: ListProgress, EntryProgress in `src/data/schemas/progress.schema.ts`
+- User: UserInterests, FandomInterest in `src/data/schemas/interests.schema.ts`
+- Export: ExportData in `src/data/schemas/export.schema.ts`
 
 ---
 
@@ -103,7 +108,7 @@ After each planning session, critique the design. Track concerns here with resol
 ## Session: 2025-02-03
 
 **Critiques Raised**: 8
-**Resolved**: 2 (TanStack Query removed, PWA manifest clarified)
-**Downscoped**: 5 (content drift, export migration, accessibility, error boundaries, data model definition)
+**Resolved**: 3 (TanStack Query removed, PWA manifest clarified, data model defined)
+**Downscoped**: 4 (content drift, export migration, accessibility, error boundaries)
 **Accepted**: 1 (documentation-heavy is intentional)
-**Open**: 1 (data model needs definition before scaffolding)
+**Open**: 0

@@ -1,0 +1,142 @@
+---
+# =============================================================================
+# LIST TEMPLATE
+# =============================================================================
+# Copy this file to: src/content/fandoms/<fandom>/lists/<list-slug>.mdx
+#
+# A list defines an ordered way to experience entries (chronological, release
+# order, custom order, etc.). Lists reference entries by ID.
+#
+# Lists support 1-4 layer hierarchy for visual grouping (eras, arcs, etc.)
+# Progress is tracked per-list, not per-entry.
+# =============================================================================
+
+# REQUIRED FIELDS
+# -----------------------------------------------------------------------------
+
+# URL-safe identifier (should match filename without extension)
+id: 'list-slug'
+
+# Display title
+title: 'Chronological Order'
+
+# Brief description
+description: 'Experience the saga in timeline order.'
+
+# OPTIONAL FIELDS
+# -----------------------------------------------------------------------------
+
+# Cover image for list cards
+coverImage: '@/assets/fandoms/fandom-slug/lists/list-slug.jpg'
+
+# Estimated total runtime (computed if not provided)
+# Format: "42h 30m" or minutes as number
+estimatedRuntime: '42h 30m'
+
+# Tags for filtering
+tags:
+  - 'recommended'
+  - 'complete'
+
+# STRUCTURE
+# =============================================================================
+# The 'structure' field defines the ordered hierarchy of entries.
+#
+# Structure can have 1-4 levels of nesting:
+#   Level 1: Top-level grouping (e.g., "Saga", "Era")
+#   Level 2: Sub-grouping (e.g., "Prequel Era", "Original Trilogy")
+#   Level 3: Arc or section (e.g., "Clone Wars", "Rebellion")
+#   Level 4: Fine-grained grouping (e.g., "Season 1", "Book 1")
+#
+# Each level can have:
+#   - title (required): Display name
+#   - description (optional): Context or summary
+#   - entries (optional): Array of entry IDs at this level
+#   - children (optional): Nested levels
+#
+# Entries are referenced by their ID (filename without extension).
+# The order in this file IS the canonical order.
+# =============================================================================
+
+structure:
+  # Example: Simple 2-level structure
+  - title: 'The Prequel Era'
+    description: 'The fall of the Republic and rise of the Empire (32 BBY - 19 BBY)'
+    children:
+      - title: 'Episode I'
+        entries:
+          - the-phantom-menace
+      - title: 'Episode II & The Clone Wars'
+        description: 'The galaxy-spanning conflict'
+        entries:
+          - attack-of-the-clones
+          - clone-wars-movie
+          - clone-wars-s01e01
+          - clone-wars-s01e02
+          # ... more episodes
+      - title: 'Episode III'
+        entries:
+          - revenge-of-the-sith
+
+  - title: 'The Imperial Era'
+    description: 'The dark times and the rise of rebellion (19 BBY - 0 BBY)'
+    children:
+      - title: 'The Bad Batch'
+        entries:
+          - bad-batch-s01e01
+          # ...
+      - title: 'Solo & Rebels'
+        entries:
+          - solo
+          - rebels-s01e01
+          # ...
+
+  - title: 'The Original Trilogy'
+    description: 'The Galactic Civil War (0 BBY - 4 ABY)'
+    entries:
+      # Can also have entries directly at level 1
+      - a-new-hope
+      - empire-strikes-back
+      - return-of-the-jedi
+
+# =============================================================================
+# ALTERNATIVE: Flat structure (no hierarchy)
+# =============================================================================
+# If you don't need visual grouping, use a simple flat list:
+#
+# structure:
+#   - entries:
+#       - entry-one
+#       - entry-two
+#       - entry-three
+# =============================================================================
+
+# =============================================================================
+# ALTERNATIVE: 4-level deep structure
+# =============================================================================
+# structure:
+#   - title: "Level 1 - Saga"
+#     children:
+#       - title: "Level 2 - Era"
+#         children:
+#           - title: "Level 3 - Arc"
+#             children:
+#               - title: "Level 4 - Section"
+#                 entries:
+#                   - entry-id
+# =============================================================================
+---
+
+{/_
+Optional MDX content below frontmatter.
+Use for viewing guides, recommendations, or context.
+_/}
+
+## How to Use This List
+
+Explain the reasoning behind this order, any skippable entries, or viewing recommendations.
+
+## Notes
+
+- **First time?** Consider starting with [another list] for a simpler introduction.
+- **Skippable:** Some entries are optional and marked accordingly.

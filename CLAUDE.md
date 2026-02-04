@@ -62,18 +62,21 @@ These checks run automatically via Husky pre-commit hooks, but run them manually
 ### Project Structure
 
 ```
+templates/                # Content templates (fandom, entry, list)
 src/
 ├── components/           # All components
 │   ├── ui/              # shadcn/ui components (avoid edits)
 │   ├── tracking/        # Progress tracking components
 │   ├── navigation/      # Nav, menus, breadcrumbs
 │   └── <category>/      # Group by feature/domain
+├── content/
+│   └── fandoms/         # Fandom content (entries + lists)
 ├── data/                # Data layer (Dexie, Zod schemas, queries)
-├── hooks/               # TanStack Query hooks, domain logic
-├── content/             # MDX content collections (fandom lists)
+├── hooks/               # React hooks using useLiveQuery
 ├── layouts/             # Page layouts
-├── lib/                 # Utilities (cn helper, small services)
+├── lib/                 # Utilities (cn helper)
 ├── pages/               # Astro pages and routes
+├── assets/              # Images (optimized by Astro)
 └── styles/              # Global CSS with Tailwind theme
 ```
 
@@ -299,22 +302,43 @@ interface ExportData {
 
 ## Content Structure
 
-All content uses MDX and lives in `src/content/<type>/`:
+Three core data structures:
 
 ```
-src/content/
-├── fandoms/              # Fandom overview pages
-│   ├── _template.mdx     # Template for new fandoms
-│   └── star-wars.mdx
-├── entries/              # Individual canon entries (movies, shows, books)
-│   ├── _template.mdx     # Template for new entries
-│   └── star-wars/
-│       ├── a-new-hope.mdx
-│       └── empire-strikes-back.mdx
-└── config.ts             # Content collection schemas
+┌─────────────────────────────────────────────────────────────┐
+│ FANDOM - Top-level container (e.g., "Star Wars")            │
+│   └── ENTRIES - Individual media (movies, episodes, books)  │
+│   └── LISTS - Ordered sequences referencing entries         │
+│         └── LAYERS - 1-4 level hierarchy for visual grouping│
+└─────────────────────────────────────────────────────────────┘
 ```
 
-**Templates**: Every content type folder must have a `_template.mdx` file documenting the required frontmatter and structure. Copy this template when creating new content.
+**Folder Structure**:
+
+```
+templates/                          # All templates at repo root
+├── fandom.template.mdx
+├── entry.template.mdx
+└── list.template.mdx
+
+src/content/fandoms/
+└── star-wars/                      # Fandom folder
+    ├── index.mdx                   # Fandom metadata
+    ├── entries/                    # All entries for this fandom
+    │   ├── phantom-menace.mdx
+    │   ├── attack-of-clones.mdx
+    │   └── clone-wars-s01e01.mdx
+    └── lists/                      # Ordered lists referencing entries
+        ├── chronological.mdx
+        └── release-order.mdx
+```
+
+**Key Concepts**:
+
+- **Entries** are stored once per fandom, referenced by ID in lists
+- **Lists** define order via `structure` field with 1-4 level hierarchy
+- **Layers** in lists are for visual grouping only; progress tracks entries
+- **Backlinks** on entries point users to streaming/purchase options
 
 ## Multimedia
 
